@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #FFFAF5;
+  --foreground: #34495E;
+  --salmon: #FF8C69;
+  --listo-green: #2ECC71;
+  --sky-blue: #5DADE2;
+  --magic-purple: #9B59B6;
+  --alert-yellow: #F1C40F;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-salmon-500 to-salmon-600;
+  }
+  
+  .gradient-text-magic {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-magic-500 to-magic-600;
+  }
+  
+  .glass {
+    @apply bg-white/70 backdrop-blur-lg border border-white/20;
+  }
+
+  /* Squircle-style rounded corners */
+  .squircle {
+    border-radius: 1.5rem;
+  }
+  
+  .squircle-lg {
+    border-radius: 2rem;
+  }
+  
+  .squircle-xl {
+    border-radius: 2.5rem;
+  }
+}
+
+/* Custom scrollbar matching Listo colors */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FFFAF5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #5DADE2;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3498DB;
+}
