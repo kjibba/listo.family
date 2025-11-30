@@ -7,14 +7,14 @@ import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 import { getFirestore, collection, query, orderBy, onSnapshot, Timestamp } from "firebase/firestore";
 import { ArrowLeft, Users, Clock, Mail, User as UserIcon, Shield, RefreshCw } from "lucide-react";
 
-// Firebase config
+// Firebase config (same as listo-app)
 const firebaseConfig = {
-  apiKey: "AIzaSyDHuNYHAJxfusMVpMHSZtJXBqnS8THXOBI",
-  authDomain: "listo-c97cf.firebaseapp.com",
-  projectId: "listo-c97cf",
-  storageBucket: "listo-c97cf.firebasestorage.app",
-  messagingSenderId: "614197092250",
-  appId: "1:614197092250:web:8c4c77c1cfde4a1d7fff1c",
+  apiKey: "AIzaSyAW6ksZsDokqRAIpczXI030u_esWHOVe0Q",
+  authDomain: "listo-6443c.firebaseapp.com",
+  projectId: "listo-6443c",
+  storageBucket: "listo-6443c.firebasestorage.app",
+  messagingSenderId: "616905600919",
+  appId: "1:616905600919:web:d5e5c9f8a7b6c4d3e2f1a0",
 };
 
 // Initialize Firebase
