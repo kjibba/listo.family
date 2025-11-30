@@ -1,6 +1,8 @@
-# Listo Landing Page
+# Listo.family Landing Page
 
-Landing page for Listo - familiens smarte hverdagsassistent.
+Landing page for [Listo](https://listo.family) - familiens smarte hverdagsassistent.
+
+🌐 **Live:** https://listo.family
 
 ## Teknologi
 
@@ -9,8 +11,9 @@ Landing page for Listo - familiens smarte hverdagsassistent.
 - **Animasjoner**: Framer Motion
 - **Ikoner**: Lucide React
 - **Språk**: TypeScript
+- **Hosting**: Docker på Hetzner
 
-## Kom i gang
+## Lokal utvikling
 
 ```bash
 # Installer avhengigheter
@@ -18,13 +21,35 @@ npm install
 
 # Start utviklingsserver
 npm run dev
-
-# Bygg for produksjon
-npm run build
-
-# Start produksjonsserver
-npm start
 ```
+
+Åpne http://localhost:3000
+
+## Deployment
+
+Siden deployes automatisk til Hetzner-serveren.
+
+### Manuell deploy
+
+Fra `NyeListo`-mappen:
+
+```powershell
+# PowerShell
+.\update-server.ps1 -LandingOnly
+```
+
+Eller oppdater alt (landing + web app):
+
+```powershell
+.\update-server.ps1
+```
+
+### Hva skjer ved deploy
+
+1. Filer synces til `/opt/listo/landing/` på serveren
+2. Docker bygger Next.js med standalone output
+3. Container startes på port 3002
+4. Nginx proxyer `listo.family` → port 3002
 
 ## Struktur
 
@@ -32,45 +57,49 @@ npm start
 src/
 ├── app/
 │   ├── layout.tsx      # Root layout med metadata
-│   ├── page.tsx        # Hovedside (landing page)
+│   ├── page.tsx        # Hovedside
 │   ├── globals.css     # Globale stiler
 │   └── login/
-│       └── page.tsx    # Login-side
+│       └── page.tsx    # Login-side (beta registrering)
 ├── components/
 │   ├── Header.tsx      # Navigasjon
-│   ├── Hero.tsx        # Hero-seksjon med CTA
-│   ├── Features.tsx    # Funksjoner-grid
-│   ├── AiShowcase.tsx  # AI-funksjoner
+│   ├── Hero.tsx        # Hero med CTA
+│   ├── Features.tsx    # Funksjoner
+│   ├── AiShowcase.tsx  # AI-demo
 │   ├── HowItWorks.tsx  # Steg-for-steg
-│   ├── Testimonials.tsx# Anmeldelser
+│   ├── Testimonials.tsx# Closed beta info
 │   ├── Pricing.tsx     # Prisplaner
-│   ├── Faq.tsx         # Ofte stilte spørsmål
+│   ├── Faq.tsx         # FAQ
 │   ├── Cta.tsx         # Nedlastings-CTA
-│   ├── Footer.tsx      # Bunntekst
-│   └── LoginPage.tsx   # Login-skjema
+│   ├── Footer.tsx      # Footer
+│   └── LoginPage.tsx   # Beta registrering
+public/
+├── images/
+│   └── listo-logo.svg
+└── screenshots/        # App-skjermbilder
+    ├── planner.png
+    ├── shopping.png
+    ├── recipe.png
+    ├── store-mode.png
+    └── ai-chat.png
 ```
 
-## Screenshots som trengs
+## Designfilosofi
 
-For å fullføre landing page trengs det screenshots fra appen:
+Se [docs/design_philosophy.md](docs/design_philosophy.md) for fargepalett og designprinsipper.
 
-### Hero-seksjon
-1. **Ukeplanlegger (hovedbilde)** - Full ukevisning med middager fylt inn
+### Farger
 
-### Features / How It Works
-2. **Handleliste** - Aktiv handleliste med kategoriserte varer
-3. **Oppskriftsvisning** - En oppskrift med ingredienser og fremgangsmåte
-4. **Familiemedlemmer** - Family-innstillinger med flere medlemmer
+| Navn | Hex | Bruk |
+|------|-----|------|
+| Cream | `#FFFAF5` | Bakgrunn |
+| Charcoal | `#34495E` | Tekst |
+| Salmon | `#FF8C69` | Primærfarge, CTA |
+| Listo Green | `#2ECC71` | Suksess |
+| Sky Blue | `#5DADE2` | Lenker |
+| Magic Purple | `#9B59B6` | AI-funksjoner |
 
-### AI Showcase
-5. **Magic Fill i aksjon** - Før/etter av AI-fylt ukeplan
-6. **URL-import** - Dialogen for å importere oppskrift fra nett
-7. **AI Chat** - Chat-grensesnittet med assistenten
+## Relaterte repos
 
-### How It Works stegene
-8. **Onboarding** - Første skjerm ved opprettelse av familie
-9. **Butikkmodus** - Handlelisten i butikkmodus
-
-## Deployment
-
-Siden er klar for deployment på Vercel, Netlify eller lignende.
+- **Listo App**: [kjibba/NyeListo](https://github.com/kjibba/NyeListo) - React Native/Expo app
+- **Web App**: Deployes fra samme repo til https://app.listo.family
