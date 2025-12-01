@@ -21,6 +21,10 @@ export const metadata: Metadata = {
     "ukeplan",
   ],
   authors: [{ name: "Listo" }],
+  icons: {
+    icon: "/images/listo-logo.svg",
+    apple: "/images/listo-logo.svg",
+  },
   openGraph: {
     title: "Listo - Familiens smarte hverdagsassistent",
     description:
