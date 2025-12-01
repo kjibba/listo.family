@@ -19,8 +19,15 @@ export const metadata: Metadata = {
     "AI",
     "middag",
     "ukeplan",
+    "middagsplanlegger",
+    "ukemeny",
+    "matplanlegging",
   ],
   authors: [{ name: "Listo" }],
+  metadataBase: new URL("https://listo.family"),
+  alternates: {
+    canonical: "/",
+  },
   icons: {
     icon: "/images/listo-logo.svg",
     apple: "/images/listo-logo.svg",
@@ -46,6 +53,33 @@ export const metadata: Metadata = {
   },
 };
 
+// Structured data for SEO
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "Listo.family",
+  applicationCategory: "LifestyleApplication",
+  operatingSystem: "iOS, Android",
+  description:
+    "AI-drevet familieapp for måltidsplanlegging, handlelister og oppskrifter.",
+  url: "https://listo.family",
+  author: {
+    "@type": "Organization",
+    name: "Listo",
+    url: "https://listo.family",
+  },
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "NOK",
+  },
+  aggregateRating: {
+    "@type": "AggregateRating",
+    ratingValue: "5",
+    ratingCount: "1",
+  },
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -58,6 +92,10 @@ export default function RootLayout({
           defer
           src="https://analytics.listo.family/script.js"
           data-website-id="1b61f65c-a9f0-473d-856b-a1ac47f61c0f"
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
       <body className="antialiased">{children}</body>
