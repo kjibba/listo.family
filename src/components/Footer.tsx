@@ -6,7 +6,7 @@ const footerLinks = {
     { label: "Funksjoner", href: "#features" },
     { label: "AI-Assistenten", href: "#ai" },
     { label: "Priser", href: "#pricing" },
-    { label: "Ofte stilte spørsmål", href: "#faq" },
+    { label: "Blogg", href: "/blogg" },
   ],
   legal: [
     { label: "Personvern", href: "/privacy" },

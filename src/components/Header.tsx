@@ -9,7 +9,7 @@ const navLinks = [
   { href: "#ai", label: "AI-Assistenten" },
   { href: "#how-it-works", label: "Slik fungerer det" },
   { href: "#pricing", label: "Priser" },
-  { href: "#faq", label: "FAQ" },
+  { href: "/blogg", label: "Blogg" },
 ];
 
 export default function Header() {
