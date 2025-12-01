@@ -53,6 +53,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="nb" className={inter.variable}>
+      <head>
+        <script
+          defer
+          src="https://analytics.listo.family/script.js"
+          data-website-id="1b61f65c-a9f0-473d-856b-a1ac47f61c0f"
+        />
+      </head>
       <body className="antialiased">{children}</body>
     </html>
   );
