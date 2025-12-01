@@ -25,7 +25,7 @@ export default function TermsPage() {
       {/* Content */}
       <main className="container mx-auto px-6 py-12 max-w-3xl">
         <h1 className="text-3xl font-bold text-charcoal mb-2">Vilkår for bruk</h1>
-        <p className="text-charcoal-light mb-8">Sist oppdatert: 1. desember 2024</p>
+        <p className="text-charcoal-light mb-8">Sist oppdatert: 1. desember 2025</p>
 
         <div className="prose prose-charcoal max-w-none space-y-8">
           
@@ -203,7 +203,7 @@ export default function TermsPage() {
       {/* Footer */}
       <footer className="border-t border-charcoal/5 mt-16 py-8">
         <div className="container mx-auto px-6 text-center text-charcoal-light text-sm">
-          <p>© 2024 Listo. Alle rettigheter reservert.</p>
+          <p>© 2025 Listo. Alle rettigheter reservert.</p>
           <div className="mt-2 space-x-4">
             <Link href="/terms" className="hover:text-charcoal underline">Vilkår for bruk</Link>
             <Link href="/privacy" className="hover:text-charcoal underline">Personvern</Link>
