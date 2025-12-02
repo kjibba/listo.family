@@ -41,7 +41,7 @@ const aiFeatures = [
     title: "Lærer av deg",
     shortDesc: "Blir smartere over tid",
     description:
-      "Jo mer dere bruker Listo, jo bedre blir den. Den lærer at barna elsker taco på fredager, at dere liker sterk mat i helgene, og at pasta alltid er en vinner på travle hverdager.",
+      "Jo mer dere bruker Listo, jo bedre blir forslagene. Appen lærer at barna elsker taco på fredager og at pasta er en vinner på travle hverdager – og bruker dette til å gi AI-en bedre instrukser.",
     screenshot: "/screenshots/planner.png",
     comingSoon: true,
   },

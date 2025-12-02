@@ -75,9 +75,9 @@ const faqCategories = [
           "Når du legger til middager i ukeplanen, samler Listo automatisk alle ingredienser fra oppskriftene og legger dem til handlelisten. Listen sorteres etter butikkens layout (frukt/grønt, kjøtt, meieri osv.) for enklere handling.",
       },
       {
-        question: "Lærer AI-en hva vi liker?",
+        question: "Blir forslagene bedre over tid?",
         answer:
-          "Ja! Over tid lærer Listo hvilke oppskrifter familien bruker ofte, og kan tilpasse forslag deretter. Du kan også gi thumbs up/down på oppskrifter for å forbedre forslagene.",
+          "Ja! Listo lærer hvilke oppskrifter familien bruker ofte, hva dere liker, og hvilke dager dere foretrekker bestemte retter. Denne innsikten brukes til å gi AI-en bedre instrukser, slik at forslagene blir mer treffsikre over tid. Du kan også gi thumbs up/down på oppskrifter for å finjustere.",
       },
     ],
   },
