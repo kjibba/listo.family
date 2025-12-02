@@ -11,7 +11,7 @@ const aiFeatures = [
     title: "Magic Fill",
     shortDesc: "Ett klikk for full ukeplan",
     description:
-      "Med bare ett trykk fyller AI-en ut hele ukeplanen basert på familiens preferanser, hva som er på tilbud, og hva dere ikke har spist på en stund. Den tar hensyn til travle dager og foreslår enkle retter når kalenderen er full.",
+      "Med bare ett trykk fyller AI-en ut hele ukeplanen basert på familiens preferanser og hva dere ikke har spist på en stund. Den tar hensyn til travle dager og foreslår enkle retter når kalenderen er full.",
     screenshot: "/screenshots/planner.png",
     comingSoon: true,
   },
@@ -19,9 +19,9 @@ const aiFeatures = [
     id: "recipe-import",
     icon: Camera,
     title: "Smart import",
-    shortDesc: "Importer fra bilde eller URL",
+    shortDesc: "Digitalisér kokeboken din",
     description:
-      "Lim inn en lenke fra hvilken som helst matblogg, og AI-en henter ut kun ingredienser og fremgangsmåte – uten reklame og lange historier. Eller ta bilde av en kokebokside, og se den digitaliseres på sekunder.",
+      "Ta bilde av en oppskrift fra kokeboken eller et blad, og AI-en digitaliserer den på sekunder. Du kan også skrive inn oppskrifter manuelt – AI-en hjelper deg å strukturere ingredienser og fremgangsmåte.",
     screenshot: "/screenshots/recipe.png",
     comingSoon: true,
   },
