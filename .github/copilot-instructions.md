@@ -18,14 +18,13 @@ Norwegian (nb) landing page for listo.family - a family assistant app for meal p
 ## Design System & Brand Colors
 Follow the "Friendly Softness" philosophy from [docs/design_philosophy.md](../docs/design_philosophy.md). Use warm, rounded visuals - no sharp corners.
 
-| Token | Hex | Purpose |
-|-------|-----|---------|
-| `cream-50` | `#FFFAF5` | Background |
-| `charcoal` | `#34495E` | Primary text, strokes |
-| `salmon-500` | `#FF8C69` | Food/meal features, CTAs |
-| `listo-500` | `#2ECC71` | Success, action states |
-| `sky-400` | `#5DADE2` | Logistics, links |
-| `magic-500` | `#9B59B6` | AI features (use ✨ sparkle icon) |
+**Color Palette:**
+- `cream-50` (`#FFFAF5`) - Background
+- `charcoal` (`#34495E`) - Primary text, strokes
+- `salmon-500` (`#FF8C69`) - Food/meal features, CTAs
+- `listo-500` (`#2ECC71`) - Success, action states
+- `sky-400` (`#5DADE2`) - Logistics, links
+- `magic-500` (`#9B59B6`) - AI features (use ✨ sparkle icon)
 
 Use Tailwind classes from [tailwind.config.ts](../tailwind.config.ts): `bg-cream-50`, `text-charcoal`, `text-salmon-500`, etc.
 
