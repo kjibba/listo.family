@@ -5,7 +5,7 @@ import Link from "next/link";
 import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 import { getFirestore, collection, query, orderBy, onSnapshot, Timestamp, doc, updateDoc } from "firebase/firestore";
-import { ArrowLeft, Users, Clock, Mail, User as UserIcon, Shield, RefreshCw, Sparkles, Send, Check, UserPlus } from "lucide-react";
+import { ArrowLeft, Users, Clock, Mail, User as UserIcon, Shield, RefreshCw, Sparkles, Send, Check, UserPlus, Bug, MessageSquare } from "lucide-react";
 
 // Firebase config (same as listo-app)
 const firebaseConfig = {
@@ -45,13 +45,32 @@ interface BetaInterest {
   invitedAt?: Timestamp;
 }
 
+interface BugReport {
+  id: string;
+  title: string;
+  description: string;
+  userId: string;
+  userEmail: string;
+  userName: string;
+  familyId?: string;
+  deviceInfo: {
+    platform: 'ios' | 'android' | 'web';
+    appVersion: string;
+  };
+  status: 'new' | 'in-progress' | 'resolved' | 'closed';
+  createdAt: Timestamp;
+  resolvedAt?: Timestamp;
+  adminNotes?: string;
+}
+
 export default function AdminPage() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<UserRegistration[]>([]);
   const [betaInterests, setBetaInterests] = useState<BetaInterest[]>([]);
-  const [activeTab, setActiveTab] = useState<"users" | "beta">("beta");
+  const [bugReports, setBugReports] = useState<BugReport[]>([]);
+  const [activeTab, setActiveTab] = useState<"users" | "beta" | "bugs">("beta");
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
 
   // Check auth state
@@ -111,6 +130,30 @@ export default function AdminPage() {
         } as BetaInterest);
       });
       setBetaInterests(interests);
+      setLastRefresh(new Date());
+    });
+
+    return () => unsubscribe();
+  }, [isAdmin]);
+
+  // Subscribe to bug reports
+  useEffect(() => {
+    if (!isAdmin) return;
+
+    const q = query(
+      collection(db, "bugReports"),
+      orderBy("createdAt", "desc")
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const reports: BugReport[] = [];
+      snapshot.forEach((doc) => {
+        reports.push({
+          id: doc.id,
+          ...doc.data(),
+        } as BugReport);
+      });
+      setBugReports(reports);
       setLastRefresh(new Date());
     });
 
@@ -181,11 +224,11 @@ Velkommen til Listo! 🎉
   // Format date
   const formatDate = (timestamp: Timestamp | string) => {
     if (!timestamp) return "Ukjent";
-    
-    const date = timestamp instanceof Timestamp 
-      ? timestamp.toDate() 
+
+    const date = timestamp instanceof Timestamp
+      ? timestamp.toDate()
       : new Date(timestamp);
-    
+
     return new Intl.DateTimeFormat("nb-NO", {
       day: "numeric",
       month: "short",
@@ -198,13 +241,13 @@ Velkommen til Listo! 🎉
   // Time ago
   const timeAgo = (timestamp: Timestamp | string) => {
     if (!timestamp) return "";
-    
-    const date = timestamp instanceof Timestamp 
-      ? timestamp.toDate() 
+
+    const date = timestamp instanceof Timestamp
+      ? timestamp.toDate()
       : new Date(timestamp);
-    
+
     const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
-    
+
     if (seconds < 60) return "akkurat nå";
     if (seconds < 3600) return `${Math.floor(seconds / 60)} min siden`;
     if (seconds < 86400) return `${Math.floor(seconds / 3600)} timer siden`;
@@ -336,14 +379,14 @@ Velkommen til Listo! 🎉
                 <p className="text-3xl font-bold text-charcoal">
                   {betaInterests.filter(b => {
                     if (!b.createdAt) return false;
-                    const date = b.createdAt instanceof Timestamp 
-                      ? b.createdAt.toDate() 
+                    const date = b.createdAt instanceof Timestamp
+                      ? b.createdAt.toDate()
                       : new Date(b.createdAt);
                     return (new Date().getTime() - date.getTime()) < 86400000;
                   }).length + users.filter(u => {
                     if (!u.registeredAt) return false;
-                    const date = u.registeredAt instanceof Timestamp 
-                      ? u.registeredAt.toDate() 
+                    const date = u.registeredAt instanceof Timestamp
+                      ? u.registeredAt.toDate()
                       : new Date(u.registeredAt);
                     return (new Date().getTime() - date.getTime()) < 86400000;
                   }).length}
@@ -371,25 +414,33 @@ Velkommen til Listo! 🎉
         <div className="flex gap-2 mb-6">
           <button
             onClick={() => setActiveTab("beta")}
-            className={`px-4 py-2 rounded-squircle-sm font-medium transition-colors ${
-              activeTab === "beta"
-                ? "bg-magic-500 text-white"
-                : "bg-white text-charcoal hover:bg-cream-50 border border-charcoal/10"
-            }`}
+            className={`px-4 py-2 rounded-squircle-sm font-medium transition-colors ${activeTab === "beta"
+              ? "bg-magic-500 text-white"
+              : "bg-white text-charcoal hover:bg-cream-50 border border-charcoal/10"
+              }`}
           >
             <Sparkles className="w-4 h-4 inline mr-2" />
             Beta-interesserte ({betaInterests.length})
           </button>
           <button
             onClick={() => setActiveTab("users")}
-            className={`px-4 py-2 rounded-squircle-sm font-medium transition-colors ${
-              activeTab === "users"
-                ? "bg-listo-500 text-white"
-                : "bg-white text-charcoal hover:bg-cream-50 border border-charcoal/10"
-            }`}
+            className={`px-4 py-2 rounded-squircle-sm font-medium transition-colors ${activeTab === "users"
+              ? "bg-listo-500 text-white"
+              : "bg-white text-charcoal hover:bg-cream-50 border border-charcoal/10"
+              }`}
           >
             <Users className="w-4 h-4 inline mr-2" />
             Registrerte brukere ({users.length})
+          </button>
+          <button
+            onClick={() => setActiveTab("bugs")}
+            className={`px-4 py-2 rounded-squircle-sm font-medium transition-colors ${activeTab === "bugs"
+              ? "bg-red-500 text-white"
+              : "bg-white text-charcoal hover:bg-cream-50 border border-charcoal/10"
+              }`}
+          >
+            <Bug className="w-4 h-4 inline mr-2" />
+            Bugreports ({bugReports.filter(b => b.status === 'new').length} nye)
           </button>
         </div>
 
@@ -427,7 +478,7 @@ Velkommen til Listo! 🎉
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-magic-400 to-magic-600 flex items-center justify-center text-white font-bold">
                       {interest.name?.[0]?.toUpperCase() || "?"}
                     </div>
-                    
+
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <p className="font-medium text-charcoal truncate">
@@ -455,15 +506,14 @@ Velkommen til Listo! 🎉
                           {formatDate(interest.createdAt)}
                         </p>
                       </div>
-                      
+
                       {interest.status !== "registered" && (
                         <button
                           onClick={() => sendInvitation(interest)}
-                          className={`px-3 py-1.5 rounded-squircle-sm text-sm font-medium flex items-center gap-1.5 transition-colors ${
-                            interest.status === "invited"
-                              ? "bg-charcoal/5 text-charcoal-light hover:bg-charcoal/10"
-                              : "bg-listo-500 text-white hover:bg-listo-600"
-                          }`}
+                          className={`px-3 py-1.5 rounded-squircle-sm text-sm font-medium flex items-center gap-1.5 transition-colors ${interest.status === "invited"
+                            ? "bg-charcoal/5 text-charcoal-light hover:bg-charcoal/10"
+                            : "bg-listo-500 text-white hover:bg-listo-600"
+                            }`}
                           title={interest.status === "invited" ? "Send på nytt" : "Send invitasjon"}
                         >
                           <Send className="w-3.5 h-3.5" />
@@ -512,7 +562,7 @@ Velkommen til Listo! 🎉
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-listo-400 to-listo-600 flex items-center justify-center text-white font-bold">
                       {user.displayName?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || "?"}
                     </div>
-                    
+
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <p className="font-medium text-charcoal truncate">
@@ -547,11 +597,105 @@ Velkommen til Listo! 🎉
           </div>
         )}
 
+        {/* Bug reports list */}
+        {activeTab === "bugs" && (
+          <div className="bg-white rounded-squircle shadow-lg border border-charcoal/5 overflow-hidden">
+            <div className="px-6 py-4 border-b border-charcoal/10 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-charcoal">
+                Bugreports
+              </h2>
+              <span className="text-sm text-charcoal-light">
+                Rapportert fra appen
+              </span>
+            </div>
+
+            {bugReports.length === 0 ? (
+              <div className="p-12 text-center text-charcoal-light">
+                <Bug className="w-12 h-12 mx-auto mb-4 opacity-30" />
+                <p>Ingen bugreports mottatt ennå.</p>
+                <p className="text-sm mt-2">
+                  Bugs vil vises her når brukere rapporterer dem fra appen.
+                </p>
+              </div>
+            ) : (
+              <div className="divide-y divide-charcoal/5">
+                {bugReports.map((bug) => (
+                  <div
+                    key={bug.id}
+                    className="px-6 py-4 hover:bg-cream-50 transition-colors"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                          <p className="font-medium text-charcoal">
+                            {bug.title}
+                          </p>
+                          <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${bug.status === 'new' ? 'bg-red-100 text-red-700' :
+                              bug.status === 'in-progress' ? 'bg-yellow-100 text-yellow-700' :
+                                bug.status === 'resolved' ? 'bg-green-100 text-green-700' :
+                                  'bg-gray-100 text-gray-700'
+                            }`}>
+                            {bug.status === 'new' ? 'Ny' :
+                              bug.status === 'in-progress' ? 'Under arbeid' :
+                                bug.status === 'resolved' ? 'Løst' : 'Lukket'}
+                          </span>
+                          <span className="px-2 py-0.5 bg-charcoal/5 text-charcoal-light text-xs rounded-full">
+                            {bug.deviceInfo?.platform} v{bug.deviceInfo?.appVersion}
+                          </span>
+                        </div>
+                        <p className="text-sm text-charcoal-light line-clamp-2 mb-2">
+                          {bug.description}
+                        </p>
+                        <div className="flex items-center gap-4 text-xs text-charcoal-light">
+                          <span className="flex items-center gap-1">
+                            <Mail className="w-3 h-3" />
+                            {bug.userEmail}
+                          </span>
+                          <span>{bug.userName}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <div className="text-right text-sm">
+                          <p className="text-charcoal">
+                            {timeAgo(bug.createdAt)}
+                          </p>
+                          <p className="text-charcoal-light text-xs">
+                            {formatDate(bug.createdAt)}
+                          </p>
+                        </div>
+
+                        <select
+                          value={bug.status}
+                          onChange={async (e) => {
+                            try {
+                              await updateDoc(doc(db, "bugReports", bug.id), {
+                                status: e.target.value,
+                                ...(e.target.value === 'resolved' ? { resolvedAt: new Date() } : {})
+                              });
+                            } catch (error) {
+                              console.error("Error updating status:", error);
+                            }
+                          }}
+                          className="px-2 py-1 text-xs border border-charcoal/10 rounded-md bg-white"
+                        >
+                          <option value="new">Ny</option>
+                          <option value="in-progress">Under arbeid</option>
+                          <option value="resolved">Løst</option>
+                          <option value="closed">Lukket</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Note */}
         <p className="text-center text-sm text-charcoal/50 mt-8">
-          💡 Data hentes fra Firestore collection <code className="bg-charcoal/5 px-1 rounded">user_registrations</code>
-          <br />
-          som fylles ut av Cloud Functions når brukere registrerer seg.
+          💡 Data hentes fra Firestore collections
         </p>
       </main>
     </div>
