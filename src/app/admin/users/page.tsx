@@ -18,7 +18,9 @@ export default function UsersPage() {
                     <p className="text-3xl font-bold text-listo-600">
                         {users.filter(u => {
                             if (!u.registeredAt) return false;
-                            const date = u.registeredAt.toDate ? u.registeredAt.toDate() : new Date(u.registeredAt);
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            const ts = u.registeredAt as any;
+                            const date = ts.toDate ? ts.toDate() : new Date(ts);
                             return (new Date().getTime() - date.getTime()) < 7 * 24 * 60 * 60 * 1000;
                         }).length}
                     </p>
@@ -28,7 +30,9 @@ export default function UsersPage() {
                     <p className="text-3xl font-bold text-salmon-600">
                         {users.filter(u => {
                             if (!u.registeredAt) return false;
-                            const date = u.registeredAt.toDate ? u.registeredAt.toDate() : new Date(u.registeredAt);
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            const ts = u.registeredAt as any;
+                            const date = ts.toDate ? ts.toDate() : new Date(ts);
                             const now = new Date();
                             return date.getDate() === now.getDate() &&
                                 date.getMonth() === now.getMonth() &&
