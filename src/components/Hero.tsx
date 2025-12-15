@@ -31,15 +31,15 @@ export default function Hero() {
 
             {/* Headline */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-charcoal leading-tight mb-6">
-              Familiens komplette{" "}
-              <span className="gradient-text-magic">hverdagsassistent</span>
+              Operativsystemet for{" "}
+              <span className="gradient-text-magic">moderne familier</span>
             </h1>
 
             {/* Subheadline */}
             <p className="text-lg sm:text-xl text-charcoal-light mb-8 max-w-xl mx-auto lg:mx-0">
-              Middagsplanlegging, handlelister, oppgavefordeling og aktivitetskalender 
-              – alt synkronisert i sanntid. listo.family tar kontroll på familielogistikken 
-              så dere kan fokusere på det som betyr noe.
+              Middagsplanlegging, handlelister, oppgavefordeling og familiekalender
+              – alt på ett sted, synkronisert i sanntid. listo.family samler hele familielogistikken
+              så dere kan fokusere på det som virkelig betyr noe.
             </p>
 
             {/* CTA Buttons */}
