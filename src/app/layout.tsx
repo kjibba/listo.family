@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     "måltidsplanlegging",
     "handleliste",
     "handleliste app",
-    "ukeplan middag",
+    "ukesplan middag",
     "hva skal vi ha til middag",
     "billig sunn middag",
     "budsjettvennlige måltider",

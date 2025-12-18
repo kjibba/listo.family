@@ -9,9 +9,9 @@ const aiFeatures = [
     id: "magic-fill",
     icon: Wand2,
     title: "Magic Fill",
-    shortDesc: "Generer hele ukeplanen",
+    shortDesc: "Generer hele ukesplanen",
     description:
-      "Med ett klikk fyller AI-en ut hele ukeplanen basert på familiens preferanser, tidligere valg, og travle dager. Den foreslår enkle retter når kalenderen er full.",
+      "Med ett klikk fyller AI-en ut hele ukesplanen basert på familiens preferanser, tidligere valg, og travle dager. Den foreslår enkle retter når kalenderen er full.",
     screenshot: "/screenshots/planner.png",
     comingSoon: false,
   },
@@ -82,15 +82,15 @@ export default function AiShowcase() {
                   key={feature.id}
                   onClick={() => setActiveFeature(feature)}
                   className={`w-full text-left p-5 rounded-squircle border transition-all ${isActive
-                      ? "bg-white border-magic-300 shadow-lg"
-                      : "bg-transparent border-transparent hover:bg-white/50 hover:border-charcoal/10"
+                    ? "bg-white border-magic-300 shadow-lg"
+                    : "bg-transparent border-transparent hover:bg-white/50 hover:border-charcoal/10"
                     }`}
                 >
                   <div className="flex items-start gap-4">
                     <div
                       className={`w-12 h-12 rounded-squircle-sm flex items-center justify-center flex-shrink-0 ${isActive
-                          ? "bg-gradient-to-br from-magic-500 to-magic-600 text-white"
-                          : "bg-magic-100 text-magic-600"
+                        ? "bg-gradient-to-br from-magic-500 to-magic-600 text-white"
+                        : "bg-magic-100 text-magic-600"
                         }`}
                     >
                       <Icon className="w-6 h-6" />

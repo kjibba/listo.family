@@ -181,7 +181,7 @@ export default function Article() {
 
                     <div className="my-12 p-6 bg-green-50 rounded-2xl border-l-4 border-green-500">
                         <ul className="text-gray-700 mb-0 space-y-2">
-                            <li><strong>Søndag kveld:</strong> Åpner appen, trykker &quot;Generer ukeplan&quot;. 30 sekunder senere: 7 middager klare.</li>
+                            <li><strong>Søndag kveld:</strong> Åpner appen, trykker &quot;Generer ukesplan&quot;. 30 sekunder senere: 7 middager klare.</li>
                             <li><strong>Justerer:</strong> Bytter ut onsdag (har kylling i fryseren), beholder resten.</li>
                             <li><strong>Handleliste:</strong> Genereres automatisk med akkurat det hun trenger.</li>
                             <li><strong>Mandag 16:30:</strong> Sjekker appen. &quot;Ah, fiskegrateng. Ingrediensene er klare.&quot;</li>

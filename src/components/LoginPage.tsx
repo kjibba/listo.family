@@ -39,7 +39,7 @@ export default function LoginPage() {
       // Check if there's a redirect URL, otherwise go to web app
       const urlParams = new URLSearchParams(window.location.search);
       const redirectTo = urlParams.get("redirect") || "https://app.listo.family";
-      
+
       if (redirectTo.startsWith("/")) {
         router.push(redirectTo);
       } else {
@@ -47,7 +47,7 @@ export default function LoginPage() {
       }
     } catch (err: any) {
       console.error("Login error:", err);
-      
+
       switch (err.code) {
         case "auth/invalid-credential":
         case "auth/user-not-found":
@@ -88,7 +88,7 @@ export default function LoginPage() {
             Velkommen tilbake til hverdagsmagien
           </h1>
           <p className="text-xl text-white/70 mb-8">
-            Logg inn for å fortsette med ukeplanen din, handlelisten og alle
+            Logg inn for å fortsette med ukesplanen din, handlelisten og alle
             familiens favorittoppskrifter.
           </p>
 

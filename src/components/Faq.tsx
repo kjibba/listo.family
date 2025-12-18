@@ -7,12 +7,12 @@ const faqs = [
   {
     question: "Er listo.family bare for middagsplanlegging?",
     answer:
-      "Nei! listo.family er en komplett familieorganisator. I tillegg til middager har du aktivitetskalender for fotballtrening og foreldremøter, oppgavelister for \"ta ut søpla\" og \"vaske klær\", handleliste, og oppskriftsbibliotek. Alt synkronisert i sanntid mellom hele familien.",
+      "Nei! listo.family er en komplett familieorganisator. I tillegg til middager har du aktivitetskalender for fotballtrening og foreldremøter, oppgavelister for \"ta ut søppelet\" og \"vaske klær\", handleliste, og oppskriftsbibliotek. Alt synkronisert i sanntid mellom hele familien.",
   },
   {
     question: "Er listo.family virkelig gratis?",
     answer:
-      "Ja! Grunnleggende funksjoner som ukeplanlegger, handleliste, oppgaver, aktiviteter og opptil 20 oppskrifter er helt gratis – for alltid. Premium-funksjoner som AI-forslag og ubegrenset lagring krever abonnement.",
+      "Ja! Grunnleggende funksjoner som ukesplanlegger, handleliste, oppgaver, aktiviteter og opptil 20 oppskrifter er helt gratis – for alltid. Premium-funksjoner som AI-forslag og ubegrenset lagring krever abonnement.",
   },
   {
     question: "Kan hele familien bruke appen?",
@@ -22,17 +22,17 @@ const faqs = [
   {
     question: "Hvordan fungerer sanntidssynkroniseringen?",
     answer:
-      "Når noen i familien legger til en vare på handlelisten, en oppgave, eller endrer ukeplanen, ser alle andre det umiddelbart – uten å trenge å oppdatere. Det fungerer på mobil, nettbrett og web.",
+      "Når noen i familien legger til en vare på handlelisten, en oppgave, eller endrer ukesplanen, ser alle andre det umiddelbart – uten å trenge å oppdatere. Det fungerer på mobil, nettbrett og web.",
   },
   {
     question: "Kan jeg fordele oppgaver mellom familiemedlemmer?",
     answer:
-      "Ja! Du kan tildele hvem som er ansvarlig for middagen, hvem som tar ut søpla, og hvem som skal på foreldremøtet. Alle ser sine oppgaver i sin egen oversikt.",
+      "Ja! Du kan tildele hvem som er ansvarlig for middagen, hvem som tar ut søppelet, og hvem som skal på foreldremøtet. Alle ser sine oppgaver i sin egen oversikt.",
   },
   {
     question: "Fungerer appen uten internett?",
     answer:
-      "Ja, listo.family er bygget for offline-bruk. Du kan se ukeplanen, krysse av handlelisten og lese oppskrifter uten nett. Endringer synkroniseres automatisk når du er tilbake online.",
+      "Ja, listo.family er bygget for offline-bruk. Du kan se ukesplanen, krysse av handlelisten og lese oppskrifter uten nett. Endringer synkroniseres automatisk når du er tilbake online.",
   },
   {
     question: "Hva slags AI bruker dere?",
@@ -87,9 +87,8 @@ export default function Faq() {
                     {faq.question}
                   </span>
                   <ChevronDown
-                    className={`w-5 h-5 text-charcoal-light flex-shrink-0 transition-transform ${
-                      isOpen ? "rotate-180" : ""
-                    }`}
+                    className={`w-5 h-5 text-charcoal-light flex-shrink-0 transition-transform ${isOpen ? "rotate-180" : ""
+                      }`}
                   />
                 </button>
                 {isOpen && (

@@ -133,7 +133,7 @@ export default function Article() {
           </h2>
           <p className="text-gray-700 leading-relaxed">
             Nordmenn kaster i snitt 42 kilo mat per person per år. Det tilsvarer
-            tusenvis av kroner rett i søpla. Spis restene, frys ned det du ikke
+            tusenvis av kroner rett i søppelet. Spis restene, frys ned det du ikke
             rekker å spise, og vær kreativ med det som nærmer seg datoen.
           </p>
 

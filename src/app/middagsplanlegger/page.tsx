@@ -143,7 +143,7 @@ export default function Middagsplanlegger() {
               <ul className="space-y-4">
                 {[
                   "Hele uken planlagt på 5 minutter søndag kveld",
-                  "Automatisk handleliste basert på ukeplanen",
+                  "Automatisk handleliste basert på ukesplanen",
                   "Mindre matsvinn med smarte forslag",
                   "Varierte middager som passer hele familien",
                   "Alle i familien kan se og bidra til planen",
@@ -182,7 +182,7 @@ export default function Middagsplanlegger() {
               {
                 icon: ShoppingCart,
                 title: "2. Handlelisten lages automatisk",
-                description: "Alle ingredienser fra ukeplanen samles i én smart handleliste, sortert etter butikkens layout.",
+                description: "Alle ingredienser fra ukesplanen samles i én smart handleliste, sortert etter butikkens layout.",
                 color: "salmon",
               },
               {

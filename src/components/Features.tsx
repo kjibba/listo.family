@@ -9,67 +9,75 @@ import {
   Sparkles,
   CheckSquare,
   MapPin,
+  ArrowRight,
 } from "lucide-react";
+
+import Link from "next/link";
 
 const features = [
   {
     icon: Calendar,
-    title: "Ukeplanlegger",
+    title: "Ukesplanlegger",
     description:
-      "Se hele uken i ett blikk med planlagte middager. Konfetti-feiring når hele uken er planlagt! 🎉",
+      "Se hele uken i ett blikk. Premium-autofill planlegger middager basert på hva dere liker og har i skapet. 🎉",
     color: "salmon",
+    link: "/ai-logistikk",
   },
   {
     icon: ShoppingCart,
     title: "Smart handleliste",
     description:
-      "AI-sortert etter butikkens layout. Porsjoner beregnes automatisk basert på hvem som spiser hjemme.",
+      "AI-sortert etter butikk. Premium-brukere får automatisk lagt til ingredienser fra ukesplanen.",
     color: "salmon",
+    link: "/ai-logistikk",
   },
   {
     icon: Users,
-    title: "Hvem spiser hjemme?",
+    title: "Delt omsorg & besøk",
     description:
-      "Perfekt for delt omsorg. Samværsplan for barn, gjester til middag, og bortreiser – alt håndteres automatisk.",
+      "Porsjoner beregnes automatisk basert på hvem som faktisk spiser hjemme. Perfekt for delt bosted!",
     color: "listo",
     isNew: true,
+    link: "/samvaersplan",
   },
   {
     icon: CheckSquare,
     title: "Familieoppgaver",
     description:
-      "Fordel hverdagsoppgaver med fleksibel gjentakelse. \"Fresh Start\" fjerner backlog-skam med ett klikk.",
+      "Fordel hverdagsoppgaver. Premium-versjonen roterer automatisk på hvem det er sin tur til å gå med søppelet.",
     color: "listo",
   },
   {
     icon: BookOpen,
     title: "Oppskriftsbibliotek",
     description:
-      "Importer fra nett, ta bilde av kokeboken, eller skriv inn manuelt. Rate oppskrifter så AI-en lærer hva familien liker.",
+      "Importer fra nett med ett klikk, eller ta bilde av kokeboken. AI-en lærer hva familien din elsker.",
     color: "magic",
   },
   {
     icon: Sparkles,
-    title: "AI-assistent",
+    title: "AI-assistent (Brain)",
     description:
-      "Chat om middagsforslag, generer ukeplaner, og få hjelp tilpasset familiens preferanser og travle dager.",
+      "Chat med din personlige prosjektleder. Hun husker allergier, budsjett og hvilke dager dere har dårlig tid.",
     color: "magic",
   },
   {
     icon: CalendarDays,
-    title: "Familiekalender",
+    title: "Aktivitetskalender",
     description:
-      "Ferier, hytteturer, jobbreiser og gjester. Påvirker porsjonsberegning og hvem som spiser hjemme automatisk.",
+      "Koble aktiviteter mot mat. Listo foreslår kjappe middager når ettermiddagen er full av treninger.",
     color: "sky",
     isNew: true,
+    link: "/ai-logistikk",
   },
   {
     icon: MapPin,
-    title: "Steder & huskelister",
+    title: "Steder & hytte",
     description:
-      "Hytte-pakkelister, båt-inventar, vedlikeholdslister. Aldri glem hva du skal ta med til Kvamskogen igjen!",
+      "Egne pakkelister og lagerstyring for hytta eller båten. Aldri mer glem dopapir til hytta! 🏔️",
     color: "alert",
     isNew: true,
+    link: "/familie-hub",
   },
 ];
 
@@ -114,7 +122,7 @@ export default function Features() {
             Middager, oppgaver og aktiviteter – alt på ett sted
           </h2>
           <p className="text-lg text-charcoal-light">
-            Fra ukens middagsplanlegging til hvem som tar ut søpla og når fotballtreningen starter –
+            Fra ukens middagsplanlegging til hvem som tar ut søppelet og når fotballtreningen starter –
             listo.family gir hele familien full oversikt.
           </p>
         </div>
@@ -126,9 +134,10 @@ export default function Features() {
             const Icon = feature.icon;
 
             return (
-              <div
+              <Link
                 key={index}
-                className={`group p-6 rounded-squircle border ${colors.border} bg-white hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative`}
+                href={(feature as any).link || "#"}
+                className={`group p-6 rounded-squircle border ${colors.border} bg-white hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative block`}
               >
                 {(feature as { isNew?: boolean }).isNew && (
                   <span className="absolute -top-2 -right-2 px-2 py-0.5 bg-gradient-to-r from-listo-500 to-listo-600 text-white text-xs font-bold rounded-full shadow-md">
@@ -143,10 +152,15 @@ export default function Features() {
                 <h3 className="text-lg font-semibold text-charcoal mb-2">
                   {feature.title}
                 </h3>
-                <p className="text-charcoal-light text-sm leading-relaxed">
+                <p className="text-charcoal-light text-sm leading-relaxed mb-4">
                   {feature.description}
                 </p>
-              </div>
+                {(feature as any).link && (
+                  <div className="flex items-center text-xs font-bold text-listo-600 group-hover:gap-2 transition-all">
+                    LES MER <ArrowRight size={14} className="ml-1" />
+                  </div>
+                )}
+              </Link>
             );
           })}
         </div>

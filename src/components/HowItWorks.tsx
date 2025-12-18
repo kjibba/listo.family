@@ -16,7 +16,7 @@ const steps = [
   {
     step: 2,
     icon: CalendarDays,
-    title: "Planlegg uka",
+    title: "Planlegg uken",
     description:
       "Legg inn middager, aktiviteter og oppgaver. Fordel ansvar mellom familiemedlemmer. På travle dager med fotballtrening foreslår appen raske middager.",
     screenshot: "/screenshots/planner.png",
@@ -76,9 +76,8 @@ export default function HowItWorks() {
             return (
               <div
                 key={item.step}
-                className={`grid lg:grid-cols-2 gap-8 lg:gap-16 items-center ${
-                  isEven ? "" : "lg:flex-row-reverse"
-                }`}
+                className={`grid lg:grid-cols-2 gap-8 lg:gap-16 items-center ${isEven ? "" : "lg:flex-row-reverse"
+                  }`}
               >
                 {/* Content */}
                 <div className={isEven ? "lg:order-1" : "lg:order-2"}>
@@ -114,11 +113,10 @@ export default function HowItWorks() {
                     </div>
                     {/* Decorative blob */}
                     <div
-                      className={`absolute -z-10 w-48 h-48 rounded-full blur-3xl ${
-                        isEven
+                      className={`absolute -z-10 w-48 h-48 rounded-full blur-3xl ${isEven
                           ? `-bottom-8 -right-8 ${colors.blob}`
                           : `-bottom-8 -left-8 ${colors.blob}`
-                      }`}
+                        }`}
                     />
                   </div>
                 </div>

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     "middagsplanlegging",
     "planlegge ukemeny",
     "måltidsplanlegging",
-    "ukeplan middag",
+    "ukesplan middag",
     "middagsplanlegger",
   ],
   alternates: {

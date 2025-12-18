@@ -45,7 +45,7 @@ const faqSchema = {
       name: "Kan hele familien bruke listo.family sammen?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Absolutt! Familiedelingsfunksjonen er kjernen i listo.family. Alle familiemedlemmer kan logge inn og se samme ukeplan, handleliste og oppskrifter. Endringer synkroniseres i sanntid – når noen legger til en vare på handlelisten, ser alle det umiddelbart.",
+        text: "Absolutt! Familiedelingsfunksjonen er kjernen i listo.family. Alle familiemedlemmer kan logge inn og se samme ukesplan, handleliste og oppskrifter. Endringer synkroniseres i sanntid – når noen legger til en vare på handlelisten, ser alle det umiddelbart.",
       },
     },
     {
@@ -61,7 +61,7 @@ const faqSchema = {
       name: "Fungerer listo.family uten internett?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Ja, listo.family har offline-støtte. Du kan se ukeplanen, krysse av på handlelisten og lese oppskrifter selv uten internettforbindelse. Endringer du gjør synkroniseres automatisk når du er tilbake online.",
+        text: "Ja, listo.family har offline-støtte. Du kan se ukesplanen, krysse av på handlelisten og lese oppskrifter selv uten internettforbindelse. Endringer du gjør synkroniseres automatisk når du er tilbake online.",
       },
     },
     {
@@ -85,7 +85,7 @@ const faqSchema = {
       name: "Hvordan lager listo.family handlelisten automatisk?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Når du legger til middager i ukeplanen, samler listo.family automatisk alle ingredienser fra oppskriftene og legger dem til handlelisten. Listen sorteres etter butikkens layout (frukt/grønt, kjøtt, meieri osv.) for enklere handling.",
+        text: "Når du legger til middager i ukesplanen, samler listo.family automatisk alle ingredienser fra oppskriftene og legger dem til handlelisten. Listen sorteres etter butikkens layout (frukt/grønt, kjøtt, meieri osv.) for enklere handling.",
       },
     },
     {
@@ -109,7 +109,7 @@ const faqSchema = {
       name: "Hva er forskjellen mellom gratis og Premium?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Gratisversjonen inkluderer ukeplanlegger, handleliste, opptil 20 oppskrifter og 2 familiemedlemmer. Premium gir ubegrenset antall oppskrifter og familiemedlemmer, AI-genererte middagsforslag, oppskriftsimport fra nettsider, og prioritert support.",
+        text: "Gratisversjonen inkluderer ukesplanlegger, handleliste, opptil 20 oppskrifter og 2 familiemedlemmer. Premium gir ubegrenset antall oppskrifter og familiemedlemmer, AI-genererte middagsforslag, oppskriftsimport fra nettsider, og prioritert support.",
       },
     },
   ],

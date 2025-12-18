@@ -26,7 +26,7 @@ const faqCategories = [
       {
         question: "Fungerer listo.family uten internett?",
         answer:
-          "Ja, listo.family har offline-støtte. Du kan se ukeplanen, krysse av på handlelisten og lese oppskrifter selv uten internettforbindelse. Endringer du gjør synkroniseres automatisk når du er tilbake online.",
+          "Ja, listo.family har offline-støtte. Du kan se ukesplanen, krysse av på handlelisten og lese oppskrifter selv uten internettforbindelse. Endringer du gjør synkroniseres automatisk når du er tilbake online.",
       },
     ],
   },
@@ -39,7 +39,7 @@ const faqCategories = [
       {
         question: "Kan hele familien bruke listo.family sammen?",
         answer:
-          "Absolutt! Familiedelingsfunksjonen er kjernen i listo.family. Alle familiemedlemmer kan logge inn og se samme ukeplan, handleliste og oppskrifter. Endringer synkroniseres i sanntid – når noen legger til en vare på handlelisten, ser alle det umiddelbart.",
+          "Absolutt! Familiedelingsfunksjonen er kjernen i listo.family. Alle familiemedlemmer kan logge inn og se samme ukesplan, handleliste og oppskrifter. Endringer synkroniseres i sanntid – når noen legger til en vare på handlelisten, ser alle det umiddelbart.",
       },
       {
         question: "Hvordan inviterer jeg familiemedlemmer?",
@@ -72,7 +72,7 @@ const faqCategories = [
       {
         question: "Hvordan lager listo.family handlelisten automatisk?",
         answer:
-          "Når du legger til middager i ukeplanen, samler listo.family automatisk alle ingredienser fra oppskriftene og legger dem til handlelisten. Listen sorteres etter butikkens layout (frukt/grønt, kjøtt, meieri osv.) for enklere handling.",
+          "Når du legger til middager i ukesplanen, samler listo.family automatisk alle ingredienser fra oppskriftene og legger dem til handlelisten. Listen sorteres etter butikkens layout (frukt/grønt, kjøtt, meieri osv.) for enklere handling.",
       },
       {
         question: "Blir forslagene bedre over tid?",
@@ -113,7 +113,7 @@ const faqCategories = [
       {
         question: "Hva er forskjellen mellom gratis og Premium?",
         answer:
-          "Gratisversjonen inkluderer ukeplanlegger, handleliste, opptil 20 oppskrifter og 2 familiemedlemmer. Premium gir ubegrenset antall oppskrifter og familiemedlemmer, AI-genererte middagsforslag, oppskriftsimport fra nettsider, og prioritert support.",
+          "Gratisversjonen inkluderer ukesplanlegger, handleliste, opptil 20 oppskrifter og 2 familiemedlemmer. Premium gir ubegrenset antall oppskrifter og familiemedlemmer, AI-genererte middagsforslag, oppskriftsimport fra nettsider, og prioritert support.",
       },
       {
         question: "Når koster listo.family penger?",
@@ -235,11 +235,10 @@ export default function FaqPage() {
           <div className="flex flex-wrap gap-2 justify-center">
             <button
               onClick={() => setActiveCategory(null)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                activeCategory === null
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${activeCategory === null
                   ? "bg-charcoal text-white"
                   : "bg-white text-charcoal hover:bg-gray-100"
-              }`}
+                }`}
             >
               Alle kategorier
             </button>
@@ -250,11 +249,10 @@ export default function FaqPage() {
                 <button
                   key={category.id}
                   onClick={() => setActiveCategory(category.id)}
-                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                    activeCategory === category.id
+                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${activeCategory === category.id
                       ? `${colors.bg} ${colors.icon}`
                       : `bg-white text-charcoal ${colors.hover}`
-                  }`}
+                    }`}
                 >
                   <Icon className="w-4 h-4" />
                   {category.name}
@@ -320,9 +318,8 @@ export default function FaqPage() {
                                 {faq.question}
                               </span>
                               <ChevronDown
-                                className={`w-5 h-5 text-charcoal-light flex-shrink-0 transition-transform ${
-                                  isOpen ? "rotate-180" : ""
-                                }`}
+                                className={`w-5 h-5 text-charcoal-light flex-shrink-0 transition-transform ${isOpen ? "rotate-180" : ""
+                                  }`}
                               />
                             </button>
                             {isOpen && (

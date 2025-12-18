@@ -12,7 +12,7 @@ export const metadata: Metadata = {
         "middagsplanlegging",
         "barn to hjem",
         "delt foreldreansvar",
-        "ukeplanlegging familie",
+        "ukesplanlegging familie",
         "middagsplan delt bosted",
     ],
 };

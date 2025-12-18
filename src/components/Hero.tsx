@@ -30,16 +30,16 @@ export default function Hero() {
             </div>
 
             {/* Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-charcoal leading-tight mb-6">
-              Operativsystemet for{" "}
-              <span className="gradient-text-magic">moderne familier</span>
+            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-charcoal leading-tight mb-6">
+              Tiden din er <br />
+              <span className="gradient-text-magic">en enklere hverdag</span>
             </h1>
 
             {/* Subheadline */}
             <p className="text-lg sm:text-xl text-charcoal-light mb-8 max-w-xl mx-auto lg:mx-0">
-              Middagsplanlegging, handlelister, oppgavefordeling og familiekalender
-              – alt på ett sted, synkronisert i sanntid. listo.family samler hele familielogistikken
-              så dere kan fokusere på det som virkelig betyr noe.
+              Operativsystemet for moderne familier. Listo samler middagsplanlegging,
+              handlelister, oppgavefordeling og kalender – alt på ett sted.
+              Begynn med en 14-dagers Gullbillett i dag.
             </p>
 
             {/* CTA Buttons */}
@@ -49,7 +49,7 @@ export default function Hero() {
                 className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-listo-500 to-listo-600 hover:from-listo-600 hover:to-listo-700 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all text-lg"
               >
                 <Sparkles className="w-5 h-5" />
-                Meld interesse for beta
+                Start 14 dagers gratis prøve
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
               <button className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white hover:bg-cream-100 text-charcoal font-semibold rounded-full shadow-md hover:shadow-lg transition-all text-lg border border-charcoal/10">
@@ -91,7 +91,7 @@ export default function Hero() {
                   <div className="bg-cream-50 rounded-[2.5rem] overflow-hidden aspect-[9/19.5]">
                     <Image
                       src="/screenshots/planner.png"
-                      alt="listo.family ukeplanlegger"
+                      alt="listo.family ukesplanlegger"
                       width={320}
                       height={693}
                       className="w-full h-full object-cover"
@@ -129,7 +129,7 @@ export default function Hero() {
               <div className="absolute -right-4 bottom-32 bg-white rounded-squircle p-3 shadow-lg animate-float" style={{ animationDelay: "2s" }}>
                 <div className="flex items-center gap-2">
                   <span className="text-xl">✅</span>
-                  <p className="text-sm font-medium text-charcoal">Ta ut søpla – Erik</p>
+                  <p className="text-sm font-medium text-charcoal">Ta ut søppelet – Erik</p>
                 </div>
               </div>
             </div>
