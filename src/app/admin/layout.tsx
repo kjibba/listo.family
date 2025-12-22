@@ -3,9 +3,9 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from "react";
 import Link from "next/link";
 import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged, User } from "firebase/auth";
+import { getAuth, onAuthStateChanged, User, signInWithEmailAndPassword } from "firebase/auth";
 import { getFirestore, collection, query, orderBy, onSnapshot, Timestamp } from "firebase/firestore";
-import { ArrowLeft, Shield } from "lucide-react";
+import { ArrowLeft, Shield, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import AdminNav from "@/components/admin/AdminNav";
 
 // Firebase config
@@ -25,6 +25,118 @@ const db = getFirestore(app);
 
 // Admin emails
 const ADMIN_EMAILS = ["kjibba@gmail.com"];
+
+// Admin Login Form Component
+function AdminLoginForm({ onSuccess }: { onSuccess: () => void }) {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState("");
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsLoading(true);
+        setError("");
+
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            onSuccess();
+        } catch (err: any) {
+            console.error("Login error:", err);
+            switch (err.code) {
+                case "auth/invalid-credential":
+                case "auth/user-not-found":
+                case "auth/wrong-password":
+                    setError("Feil e-post eller passord.");
+                    break;
+                case "auth/too-many-requests":
+                    setError("For mange forsøk. Prøv igjen senere.");
+                    break;
+                default:
+                    setError("Noe gikk galt. Prøv igjen.");
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return (
+        <div className="w-full max-w-md bg-white rounded-squircle shadow-xl p-8 border border-charcoal/5">
+            <div className="text-center mb-6">
+                <Shield className="w-16 h-16 text-listo-500 mx-auto mb-4" />
+                <h2 className="text-2xl font-bold text-charcoal mb-2">Admin-tilgang</h2>
+                <p className="text-charcoal-light">Logg inn med admin-konto</p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-charcoal mb-2">
+                        E-post
+                    </label>
+                    <div className="relative">
+                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-charcoal/40" />
+                        <input
+                            id="email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="admin@example.com"
+                            required
+                            className="w-full pl-12 pr-4 py-3 rounded-squircle-sm border border-charcoal/20 focus:border-listo-500 focus:ring-2 focus:ring-listo-500/20 outline-none transition-all"
+                        />
+                    </div>
+                </div>
+
+                <div>
+                    <label htmlFor="password" className="block text-sm font-medium text-charcoal mb-2">
+                        Passord
+                    </label>
+                    <div className="relative">
+                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-charcoal/40" />
+                        <input
+                            id="password"
+                            type={showPassword ? "text" : "password"}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="••••••••"
+                            required
+                            className="w-full pl-12 pr-12 py-3 rounded-squircle-sm border border-charcoal/20 focus:border-listo-500 focus:ring-2 focus:ring-listo-500/20 outline-none transition-all"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-charcoal/40 hover:text-charcoal"
+                        >
+                            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                        </button>
+                    </div>
+                </div>
+
+                {error && (
+                    <div className="bg-red-50 text-red-700 px-4 py-3 rounded-squircle-sm text-sm">
+                        {error}
+                    </div>
+                )}
+
+                <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full py-3 px-6 bg-gradient-to-r from-listo-500 to-listo-600 hover:from-listo-600 hover:to-listo-700 disabled:from-listo-300 disabled:to-listo-400 text-white font-semibold rounded-squircle-sm shadow-lg hover:shadow-xl transition-all"
+                >
+                    {isLoading ? "Logger inn..." : "Logg inn"}
+                </button>
+            </form>
+
+            <Link
+                href="/"
+                className="block text-center text-charcoal-light hover:text-charcoal mt-6 text-sm"
+            >
+                ← Tilbake til forsiden
+            </Link>
+        </div>
+    );
+}
 
 // Types
 export interface UserRegistration {
@@ -194,17 +306,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     if (!currentUser) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-cream-50 to-cream-100 flex items-center justify-center p-8">
-                <div className="w-full max-w-md bg-white rounded-squircle shadow-xl p-8 border border-charcoal/5 text-center">
-                    <Shield className="w-16 h-16 text-charcoal/20 mx-auto mb-6" />
-                    <h2 className="text-2xl font-bold text-charcoal mb-2">Admin-tilgang kreves</h2>
-                    <p className="text-charcoal-light mb-6">Du må logge inn med en admin-konto for å se denne siden.</p>
-                    <Link
-                        href="/login"
-                        className="block w-full py-3 px-6 bg-gradient-to-r from-listo-500 to-listo-600 hover:from-listo-600 hover:to-listo-700 text-white font-semibold rounded-squircle-sm shadow-lg hover:shadow-xl transition-all text-center"
-                    >
-                        Logg inn
-                    </Link>
-                </div>
+                <AdminLoginForm onSuccess={() => setLoading(true)} />
             </div>
         );
     }
