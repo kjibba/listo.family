@@ -283,16 +283,36 @@ export default function AIStatsPage() {
                         <div className="bg-red-50 rounded-squircle p-6 border border-red-200">
                             <h3 className="font-semibold text-red-800 flex items-center gap-2 mb-4">
                                 <AlertTriangle className="w-5 h-5" />
-                                Feil
+                                Feil ({totalErrors} totalt)
                             </h3>
-                            <div className="space-y-2">
-                                {Object.entries(stats.breakdown.errors).map(([errorType, count]) => (
-                                    <div key={errorType} className="flex items-center justify-between">
-                                        <span className="text-red-700 font-mono text-sm">{errorType}</span>
-                                        <span className="font-semibold text-red-800">{count}</span>
-                                    </div>
-                                ))}
+                            <div className="space-y-4">
+                                {Object.entries(stats.breakdown.errors).map(([errorType, count]) => {
+                                    // Provide explanations for known error types
+                                    const errorExplanations: Record<string, string> = {
+                                        'GENERATION_FAILED': 'AI-generering feilet, ofte pga. ugyldig respons fra Gemini eller timeout',
+                                        'RATE_LIMITED': 'For mange forespørsler, brukeren har nådd grensen',
+                                        'INVALID_REQUEST': 'Ugyldig forespørsel fra klienten',
+                                        'CACHE_ERROR': 'Feil ved lesing/skriving til cache',
+                                        'TIMEOUT': 'Forespørselen tok for lang tid (>30s)',
+                                        'PARSE_ERROR': 'Kunne ikke parse AI-responsen til gyldig JSON',
+                                    };
+                                    const explanation = errorExplanations[errorType] || 'Ukjent feiltype';
+                                    const percent = Math.round((count / totalErrors) * 100);
+                                    
+                                    return (
+                                        <div key={errorType} className="bg-white/50 rounded-lg p-3">
+                                            <div className="flex items-center justify-between mb-1">
+                                                <span className="text-red-700 font-mono text-sm font-semibold">{errorType}</span>
+                                                <span className="font-bold text-red-800">{count} ({percent}%)</span>
+                                            </div>
+                                            <p className="text-red-600 text-xs">{explanation}</p>
+                                        </div>
+                                    );
+                                })}
                             </div>
+                            <p className="text-red-600 text-xs mt-4 pt-3 border-t border-red-200">
+                                💡 Feilrate: {((totalErrors / Math.max(stats.totals?.requests || 1, 1)) * 100).toFixed(1)}% av totale forespørsler
+                            </p>
                         </div>
                     )}
 
