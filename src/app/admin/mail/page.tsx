@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Mail, RefreshCw, Send, Eye, Clock, Paperclip, Reply, AlertCircle, CheckCircle, Inbox, ChevronLeft } from "lucide-react";
+import { Mail, RefreshCw, Send, Eye, Clock, Paperclip, Reply, AlertCircle, CheckCircle, Inbox, ChevronLeft, Key } from "lucide-react";
 
 interface Email {
     uid: number;
@@ -30,6 +30,8 @@ export default function AdminMailPage() {
     const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);
     const [showCompose, setShowCompose] = useState(false);
     const [replyMode, setReplyMode] = useState(false);
+    const [adminKey, setAdminKey] = useState<string>("");
+    const [showKeyInput, setShowKeyInput] = useState(false);
 
     // Compose state
     const [composeTo, setComposeTo] = useState("");
@@ -38,23 +40,45 @@ export default function AdminMailPage() {
     const [sending, setSending] = useState(false);
     const [sendSuccess, setSendSuccess] = useState(false);
 
+    // Load admin key from localStorage on mount
+    useEffect(() => {
+        const stored = localStorage.getItem("listo-admin-key");
+        if (stored) {
+            setAdminKey(stored);
+        } else {
+            setShowKeyInput(true);
+        }
+    }, []);
+
+    const saveAdminKey = () => {
+        if (adminKey.trim()) {
+            localStorage.setItem("listo-admin-key", adminKey.trim());
+            setShowKeyInput(false);
+            fetchEmails();
+        }
+    };
+
     const fetchEmails = useCallback(async () => {
         setLoading(true);
         setError(null);
         try {
-            const adminKey = localStorage.getItem("listo-admin-key");
-            if (!adminKey) {
-                setError("Admin-nøkkel mangler. Sett den i localStorage som 'listo-admin-key'.");
+            const storedKey = localStorage.getItem("listo-admin-key");
+            if (!storedKey) {
+                setShowKeyInput(true);
                 setLoading(false);
                 return;
             }
 
             const res = await fetch(`${API_URL}/api/admin/emails?limit=50`, {
-                headers: { "x-admin-key": adminKey }
+                headers: { "x-admin-key": storedKey }
             });
 
             if (!res.ok) {
                 const data = await res.json();
+                if (res.status === 401) {
+                    setShowKeyInput(true);
+                    localStorage.removeItem("listo-admin-key");
+                }
                 throw new Error(data.error || "Kunne ikke hente e-poster");
             }
 
@@ -68,7 +92,10 @@ export default function AdminMailPage() {
     }, []);
 
     useEffect(() => {
-        fetchEmails();
+        if (!showKeyInput) {
+            fetchEmails();
+        }
+    }, [fetchEmails, showKeyInput]);
     }, [fetchEmails]);
 
     const handleSelectEmail = async (email: Email) => {
@@ -170,6 +197,40 @@ export default function AdminMailPage() {
 
     const unreadCount = emails.filter(e => !e.isRead).length;
 
+    // Show admin key input if not set
+    if (showKeyInput) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <div className="bg-white rounded-squircle p-8 shadow-lg border border-charcoal/10 max-w-md w-full">
+                    <div className="text-center mb-6">
+                        <Key className="w-12 h-12 text-magic-500 mx-auto mb-3" />
+                        <h2 className="text-xl font-bold text-charcoal">Admin-nøkkel kreves</h2>
+                        <p className="text-charcoal-light text-sm mt-1">
+                            Skriv inn admin-nøkkelen for å få tilgang til e-post
+                        </p>
+                    </div>
+                    <div className="space-y-4">
+                        <input
+                            type="password"
+                            value={adminKey}
+                            onChange={(e) => setAdminKey(e.target.value)}
+                            onKeyDown={(e) => e.key === "Enter" && saveAdminKey()}
+                            placeholder="Admin-nøkkel"
+                            className="w-full px-4 py-3 border border-charcoal/20 rounded-squircle-sm focus:border-magic-500 focus:ring-2 focus:ring-magic-500/20 outline-none"
+                        />
+                        <button
+                            onClick={saveAdminKey}
+                            disabled={!adminKey.trim()}
+                            className="w-full py-3 bg-gradient-to-r from-magic-500 to-magic-600 text-white font-semibold rounded-squircle-sm hover:from-magic-600 hover:to-magic-700 transition-colors disabled:opacity-50"
+                        >
+                            Lagre og fortsett
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-6">
             {/* Header */}
@@ -212,20 +273,8 @@ export default function AdminMailPage() {
                 </div>
             </div>
 
-            {/* Admin Key Notice */}
-            {error?.includes("Admin-nøkkel") && (
-                <div className="bg-alert-100 border border-alert-300 rounded-squircle p-4">
-                    <p className="text-alert-800 text-sm">
-                        <strong>Tips:</strong> Åpne utviklerverktøy (F12) og kjør:
-                        <code className="bg-alert-200 px-2 py-1 rounded ml-2">
-                            localStorage.setItem('listo-admin-key', 'din-nøkkel')
-                        </code>
-                    </p>
-                </div>
-            )}
-
             {/* Error */}
-            {error && !error.includes("Admin-nøkkel") && (
+            {error && (
                 <div className="bg-red-50 border border-red-200 rounded-squircle p-4 flex items-center gap-3">
                     <AlertCircle className="w-5 h-5 text-red-500 shrink-0" />
                     <p className="text-red-700">{error}</p>
