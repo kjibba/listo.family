@@ -96,7 +96,6 @@ export default function AdminMailPage() {
             fetchEmails();
         }
     }, [fetchEmails, showKeyInput]);
-    }, [fetchEmails]);
 
     const handleSelectEmail = async (email: Email) => {
         setSelectedEmail(email);
