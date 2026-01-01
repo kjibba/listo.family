@@ -35,6 +35,12 @@ interface ServerStats {
         image?: string;
         state?: string;
     }>;
+    topProcesses: Array<{
+        pid: number;
+        cpu: number;
+        memory: number;
+        command: string;
+    }>;
     uptime: string;
     warnings: {
         highCpu: boolean;
@@ -251,6 +257,51 @@ export default function ServerPage() {
                             </table>
                         </div>
                     </div>
+
+                    {/* Top Processes */}
+                    {stats.topProcesses && stats.topProcesses.length > 0 && (
+                        <div className="bg-white rounded-squircle p-6 border border-gray-100">
+                            <div className="flex items-center gap-3 mb-4">
+                                <Cpu className="w-5 h-5 text-purple-500" />
+                                <h3 className="font-semibold text-charcoal">Topprosesser (ikke-Docker)</h3>
+                                <span className="text-xs text-charcoal-light">
+                                    Viser prosesser som bruker &gt; 0.1% CPU eller &gt; 0.5% RAM
+                                </span>
+                            </div>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-sm font-mono">
+                                    <thead>
+                                        <tr className="text-left text-charcoal-light border-b">
+                                            <th className="pb-2 font-medium">PID</th>
+                                            <th className="pb-2 font-medium">CPU %</th>
+                                            <th className="pb-2 font-medium">RAM %</th>
+                                            <th className="pb-2 font-medium">Kommando</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {stats.topProcesses.map((proc) => (
+                                            <tr key={proc.pid} className="border-b border-gray-50 hover:bg-gray-50">
+                                                <td className="py-2 text-charcoal-light">{proc.pid}</td>
+                                                <td className="py-2">
+                                                    <span className={`font-medium ${proc.cpu > 10 ? 'text-red-600' : proc.cpu > 5 ? 'text-yellow-600' : 'text-charcoal'}`}>
+                                                        {proc.cpu.toFixed(1)}
+                                                    </span>
+                                                </td>
+                                                <td className="py-2">
+                                                    <span className={`font-medium ${proc.memory > 10 ? 'text-red-600' : proc.memory > 5 ? 'text-yellow-600' : 'text-charcoal'}`}>
+                                                        {proc.memory.toFixed(1)}
+                                                    </span>
+                                                </td>
+                                                <td className="py-2 text-charcoal-light truncate max-w-md" title={proc.command}>
+                                                    {proc.command}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Footer Info */}
                     <div className="flex items-center justify-between text-sm text-charcoal-light">
