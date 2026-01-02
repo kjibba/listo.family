@@ -34,6 +34,12 @@ interface ServerStats {
         status?: string;
         image?: string;
         state?: string;
+        processes?: Array<{
+            pid: number;
+            cpu: number;
+            memory: number;
+            command: string;
+        }>;
     }>;
     topProcesses: Array<{
         pid: number;
@@ -232,26 +238,68 @@ export default function ServerPage() {
                                 </thead>
                                 <tbody>
                                     {stats.containers.map((container) => (
-                                        <tr key={container.name} className="border-b border-gray-50">
-                                            <td className="py-3 font-medium text-charcoal">
-                                                <div className="flex items-center gap-2">
-                                                    <CheckCircle className={`w-4 h-4 ${container.state === 'running' ? 'text-green-500' : 'text-yellow-500'}`} />
-                                                    <div>
-                                                        <div>{container.name}</div>
-                                                        <div className="text-xs text-charcoal-light font-normal">{container.image}</div>
+                                        <>
+                                            <tr key={container.name} className="border-b border-gray-50">
+                                                <td className="py-3 font-medium text-charcoal">
+                                                    <div className="flex items-center gap-2">
+                                                        <CheckCircle className={`w-4 h-4 ${container.state === 'running' ? 'text-green-500' : 'text-yellow-500'}`} />
+                                                        <div>
+                                                            <div>{container.name}</div>
+                                                            <div className="text-xs text-charcoal-light font-normal">{container.image}</div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </td>
-                                            <td className="py-3 text-charcoal-light">
-                                                <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${container.status?.startsWith('Up') ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                                                    }`}>
-                                                    {container.status || 'Unknown'}
-                                                </span>
-                                            </td>
-                                            <td className="py-3 text-charcoal-light">{container.cpu}</td>
-                                            <td className="py-3 text-charcoal-light">{container.memory}</td>
-                                            <td className="py-3 text-charcoal-light">{container.netIO}</td>
-                                        </tr>
+                                                </td>
+                                                <td className="py-3 text-charcoal-light">
+                                                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${container.status?.startsWith('Up') ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                                                        }`}>
+                                                        {container.status || 'Unknown'}
+                                                    </span>
+                                                </td>
+                                                <td className="py-3">
+                                                    <span className={`font-medium ${parseFloat(container.cpu) > 50 ? 'text-red-600' : parseFloat(container.cpu) > 20 ? 'text-yellow-600' : 'text-charcoal-light'}`}>
+                                                        {container.cpu}
+                                                    </span>
+                                                </td>
+                                                <td className="py-3 text-charcoal-light">{container.memory}</td>
+                                                <td className="py-3 text-charcoal-light">{container.netIO}</td>
+                                            </tr>
+                                            {/* Show processes inside this container if available */}
+                                            {container.processes && container.processes.length > 0 && (
+                                                <tr key={`${container.name}-processes`} className="bg-gray-50">
+                                                    <td colSpan={5} className="py-2 px-4">
+                                                        <div className="text-xs text-charcoal-light mb-2 font-semibold">
+                                                            🔍 Prosesser inne i {container.name}:
+                                                        </div>
+                                                        <table className="w-full text-xs font-mono">
+                                                            <thead>
+                                                                <tr className="text-left text-charcoal-light">
+                                                                    <th className="pb-1 font-medium">PID</th>
+                                                                    <th className="pb-1 font-medium">CPU %</th>
+                                                                    <th className="pb-1 font-medium">RAM %</th>
+                                                                    <th className="pb-1 font-medium">Kommando</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {container.processes.map((proc) => (
+                                                                    <tr key={`${container.name}-${proc.pid}`} className="border-t border-gray-200">
+                                                                        <td className="py-1 text-charcoal-light">{proc.pid}</td>
+                                                                        <td className="py-1">
+                                                                            <span className={`font-medium ${proc.cpu > 10 ? 'text-red-600' : proc.cpu > 5 ? 'text-yellow-600' : 'text-charcoal'}`}>
+                                                                                {proc.cpu.toFixed(1)}
+                                                                            </span>
+                                                                        </td>
+                                                                        <td className="py-1 text-charcoal-light">{proc.memory.toFixed(1)}</td>
+                                                                        <td className="py-1 text-charcoal-light truncate max-w-md" title={proc.command}>
+                                                                            {proc.command}
+                                                                        </td>
+                                                                    </tr>
+                                                                ))}
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </>
                                     ))}
                                 </tbody>
                             </table>
