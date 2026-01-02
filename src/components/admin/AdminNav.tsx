@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, Sparkles, Bug, Server, Zap, Mail } from "lucide-react";
+import { LayoutDashboard, Users, Sparkles, Bug, Server, Zap, Mail, Apple } from "lucide-react";
 
 const navItems = [
     { href: "/admin", label: "Oversikt", icon: LayoutDashboard },
@@ -10,6 +10,7 @@ const navItems = [
     { href: "/admin/ai", label: "AI", icon: Zap },
     { href: "/admin/mail", label: "E-post", icon: Mail },
     { href: "/admin/beta", label: "Beta", icon: Sparkles },
+    { href: "/admin/ios", label: "iOS", icon: Apple },
     { href: "/admin/users", label: "Brukere", icon: Users },
     { href: "/admin/bugs", label: "Bugs", icon: Bug },
 ];

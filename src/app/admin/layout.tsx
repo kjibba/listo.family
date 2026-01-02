@@ -179,11 +179,20 @@ export interface BugReport {
     adminNotes?: string;
 }
 
+export interface IosWaitlistEntry {
+    id: string;
+    email: string;
+    createdAt: Timestamp;
+    source: string;
+    notified: boolean;
+}
+
 // Context
 interface AdminContextType {
     users: UserRegistration[];
     betaInterests: BetaInterest[];
     bugReports: BugReport[];
+    iosWaitlist: IosWaitlistEntry[];
     lastRefresh: Date;
     db: ReturnType<typeof getFirestore>;
 }
@@ -234,6 +243,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     const [users, setUsers] = useState<UserRegistration[]>([]);
     const [betaInterests, setBetaInterests] = useState<BetaInterest[]>([]);
     const [bugReports, setBugReports] = useState<BugReport[]>([]);
+    const [iosWaitlist, setIosWaitlist] = useState<IosWaitlistEntry[]>([]);
     const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
 
     // Check auth state
@@ -295,6 +305,21 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         return () => unsubscribe();
     }, [isAdmin]);
 
+    // Subscribe to iOS waitlist
+    useEffect(() => {
+        if (!isAdmin) return;
+        const q = query(collection(db, "ios_waitlist"), orderBy("createdAt", "desc"));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const entries: IosWaitlistEntry[] = [];
+            snapshot.forEach((doc) => {
+                entries.push({ id: doc.id, ...doc.data() } as IosWaitlistEntry);
+            });
+            setIosWaitlist(entries);
+            setLastRefresh(new Date());
+        });
+        return () => unsubscribe();
+    }, [isAdmin]);
+
     // Loading state
     if (loading) {
         return (
@@ -334,7 +359,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
     // Admin layout
     return (
-        <AdminContext.Provider value={{ users, betaInterests, bugReports, lastRefresh, db }}>
+        <AdminContext.Provider value={{ users, betaInterests, bugReports, iosWaitlist, lastRefresh, db }}>
             <div className="min-h-screen bg-gradient-to-br from-cream-50 to-cream-100">
                 {/* Header */}
                 <header className="bg-white border-b border-charcoal/10 sticky top-0 z-10">
