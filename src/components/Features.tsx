@@ -16,67 +16,65 @@ import Link from "next/link";
 
 const features = [
   {
-    icon: Calendar,
-    title: "Ukesplanlegger",
+    icon: ShoppingCart,
+    title: "Live-synk handleliste",
     description:
-      "Se hele uken i ett blikk. Premium-autofill planlegger middager basert på hva dere liker og har i skapet. 🎉",
-    color: "salmon",
-    link: "/ai-logistikk",
+      "Handle sammen i sanntid. Se hva partneren din plukker mens du er i en annen gang. Aldri kjøp melk dobbelt igjen.",
+    color: "listo",
+    isNew: true,
+    link: "/butikkmodus",
   },
   {
-    icon: ShoppingCart,
-    title: "Smart handleliste",
+    icon: Calendar,
+    title: "Auto-generert handleliste",
     description:
-      "AI-sortert etter butikk. Premium-brukere får automatisk lagt til ingredienser fra ukesplanen.",
-    color: "salmon",
+      "Velg oppskrifter for uken, så lager handlelisten seg selv. Ingrediensene sorteres etter butikkens oppsett.",
+    color: "listo",
     link: "/ai-logistikk",
   },
   {
     icon: Users,
-    title: "Delt omsorg & besøk",
+    title: "Samværsplan & porsjoner",
     description:
-      "Porsjoner beregnes automatisk basert på hvem som faktisk spiser hjemme. Perfekt for delt bosted!",
-    color: "listo",
-    isNew: true,
+      "Planlegger hvem som spiser hjemme når. Porsjoner justeres automatisk – perfekt for delt omsorg.",
+    color: "salmon",
     link: "/samvaersplan",
+  },
+  {
+    icon: CalendarDays,
+    title: "Ukesplanlegger",
+    description:
+      "Se hele uken i ett blikk. Travle ettermiddager? Listo foreslår retter som tar under 20 minutter.",
+    color: "salmon",
+    link: "/ai-logistikk",
   },
   {
     icon: CheckSquare,
     title: "Familieoppgaver",
     description:
-      "Fordel hverdagsoppgaver. Premium-versjonen roterer automatisk på hvem det er sin tur til å gå med søppelet.",
-    color: "listo",
+      "Fordel hverdagsoppgaver. Roter automatisk på søppeltømming, rydding og andre gjøremål.",
+    color: "magic",
   },
   {
     icon: BookOpen,
     title: "Oppskriftsbibliotek",
     description:
-      "Importer fra nett med ett klikk, eller ta bilde av kokeboken. AI-en lærer hva familien din elsker.",
+      "Importer fra nett med ett klikk, eller ta bilde av kokeboken. Oppskriftene dine, alltid tilgjengelig.",
     color: "magic",
   },
   {
     icon: Sparkles,
-    title: "AI-assistent (Brain)",
+    title: "Smart assistent",
     description:
-      "Chat med din personlige prosjektleder. Hun husker allergier, budsjett og hvilke dager dere har dårlig tid.",
-    color: "magic",
-  },
-  {
-    icon: CalendarDays,
-    title: "Aktivitetskalender",
-    description:
-      "Koble aktiviteter mot mat. Listo foreslår kjappe middager når ettermiddagen er full av treninger.",
+      "Spør om middagstips, porsjonsjusteringer eller hva du kan lage med det du har i kjøleskapet.",
     color: "sky",
-    isNew: true,
-    link: "/ai-logistikk",
   },
   {
     icon: MapPin,
     title: "Steder & hytte",
     description:
-      "Egne pakkelister og lagerstyring for hytta eller båten. Aldri mer glem dopapir til hytta! 🏔️",
+      "Egne lister for hytta, båten eller ferieleiligheten. Aldri mer glem dopapir til hytta! 🏔️",
     color: "alert",
-    isNew: true,
     link: "/familie-hub",
   },
 ];

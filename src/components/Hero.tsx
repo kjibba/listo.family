@@ -19,27 +19,26 @@ export default function Hero() {
           {/* Left content */}
           <div className="text-center lg:text-left">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-salmon-100 to-magic-100 rounded-full mb-6 border border-salmon-200">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-listo-100 to-listo-200 rounded-full mb-6 border border-listo-300">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-salmon-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-salmon-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-listo-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-listo-500"></span>
               </span>
               <span className="text-sm font-medium text-charcoal">
-                Lukket beta – Begrenset antall plasser
+                Ny: Butikkmodus med live-synk
               </span>
             </div>
 
             {/* Headline */}
             <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-charcoal leading-tight mb-6">
-              Tiden din er <br />
-              <span className="gradient-text-magic">en enklere hverdag</span>
+              Én app,<br />
+              <span className="gradient-text-magic">null kaos</span>
             </h1>
 
             {/* Subheadline */}
             <p className="text-lg sm:text-xl text-charcoal-light mb-8 max-w-xl mx-auto lg:mx-0">
-              Operativsystemet for moderne familier. Listo samler middagsplanlegging,
-              handlelister, oppgavefordeling og kalender – alt på ett sted.
-              Begynn med en 14-dagers Gullbillett i dag.
+              Middager, handlelister og hvem som har ungene – automatisk synkronisert.
+              Familier som bruker listo.family sparer i snitt <strong>3 timer i uken</strong>.
             </p>
 
             {/* CTA Buttons */}
@@ -49,12 +48,12 @@ export default function Hero() {
                 className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-listo-500 to-listo-600 hover:from-listo-600 hover:to-listo-700 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all text-lg"
               >
                 <Sparkles className="w-5 h-5" />
-                Start 14 dagers gratis prøve
+                Prøv gratis i 14 dager
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
               <button className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white hover:bg-cream-100 text-charcoal font-semibold rounded-full shadow-md hover:shadow-lg transition-all text-lg border border-charcoal/10">
                 <Play className="w-5 h-5 fill-listo-500 text-listo-500" />
-                Se hvordan det fungerer
+                Se butikkmodus i aksjon
               </button>
             </div>
 
@@ -64,13 +63,13 @@ export default function Hero() {
                 <svg className="w-5 h-5 text-listo-500" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                14 dagers gratis prøve
+                Ingen kredittkort nødvendig
               </span>
               <span className="flex items-center gap-1.5">
                 <svg className="w-5 h-5 text-listo-500" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                Android • iOS kommer 2026
+                Android nå • iOS Q1 2026
               </span>
               <span className="flex items-center gap-1.5">
                 <svg className="w-5 h-5 text-listo-500" fill="currentColor" viewBox="0 0 20 20">

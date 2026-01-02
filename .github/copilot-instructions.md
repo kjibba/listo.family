@@ -15,8 +15,18 @@ Norwegian (nb) landing page for listo.family - a family assistant app for meal p
 ## Terminal Usage
 **IMPORTANT:** Do not write to or interact with terminals that have running processes (e.g., `npm run dev`, `npm run build`). Wait for the process to complete before sending new commands.
 
+**⚠️ CRITICAL: Git & Deployment Policy (NON-NEGOTIABLE)**
+- **ALWAYS ASK before committing/pushing to `main` branch**
+- `main` branch auto-deploys to production immediately via server monitoring
+- Production bugs affect real users - TEST thoroughly before pushing
+- Only push to `main` for:
+  - Critical hotfixes (security, crashes, data loss)
+  - Explicitly approved changes by user
+  - Minor documentation/content updates
+- When uncertain, commit to separate branch and wait for user review
+
 ## Design System & Brand Colors
-Follow the "Friendly Softness" philosophy from [docs/design_philosophy.md](../docs/design_philosophy.md). Use warm, rounded visuals - no sharp corners.
+Follow the "Friendly Softness" philosophy documented in the design philosophy file. Use warm, rounded visuals - no sharp corners.
 
 **Color Palette:**
 - `cream-50` (`#FFFAF5`) - Background
@@ -26,12 +36,12 @@ Follow the "Friendly Softness" philosophy from [docs/design_philosophy.md](../do
 - `sky-400` (`#5DADE2`) - Logistics, links
 - `magic-500` (`#9B59B6`) - AI features (use ✨ sparkle icon)
 
-Use Tailwind classes from [tailwind.config.ts](../tailwind.config.ts): `bg-cream-50`, `text-charcoal`, `text-salmon-500`, etc.
+Use Tailwind classes defined in the config: `bg-cream-50`, `text-charcoal`, `text-salmon-500`, etc.
 
 ## Component Patterns
 
 ### Section Structure
-Each landing page section follows this pattern (see [src/components/Features.tsx](../src/components/Features.tsx)):
+Each landing page section follows this pattern (see Features component):
 ```tsx
 <section className="py-24 bg-white">  {/* or bg-cream-50 */}
   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -53,10 +63,10 @@ Each landing page section follows this pattern (see [src/components/Features.tsx
 ### Client vs Server Components
 - Default to server components (no directive)
 - Add `"use client"` only for: Framer Motion animations, interactive elements, event handlers
-- See [src/components/Hero.tsx](../src/components/Hero.tsx) for client component pattern
+- See Hero component for client component pattern
 
 ## Blog Articles
-Blog posts live in `src/app/blogg/[slug]/page.tsx`. Article metadata defined inline in [src/app/blogg/page.tsx](../src/app/blogg/page.tsx). Each article page exports:
+Blog posts live in the blogg directory with dynamic routes. Article metadata defined inline in the blog page. Each article page exports:
 - `metadata` object for SEO
 - `jsonLd` structured data for Google
 - Article content with consistent heading hierarchy

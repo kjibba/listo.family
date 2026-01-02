@@ -1,13 +1,11 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Features from "@/components/Features";
-import AiShowcase from "@/components/AiShowcase";
+import StoreModeShowcase from "@/components/StoreModeShowcase";
 import HowItWorks from "@/components/HowItWorks";
-import Pricing from "@/components/Pricing";
-// import FoundersPass from "@/components/FoundersPass";
-// <FoundersPass />
-// Note: Component file missing, commented out to unblock build
+import IosWaitlist from "@/components/IosWaitlist";
 import Testimonials from "@/components/Testimonials";
+import Pricing from "@/components/Pricing";
 import BlogPreview from "@/components/BlogPreview";
 import Faq from "@/components/Faq";
 import Cta from "@/components/Cta";
@@ -19,11 +17,11 @@ export default function Home() {
       <Header />
       <Hero />
       <Features />
-      <AiShowcase />
+      <StoreModeShowcase />
       <HowItWorks />
+      <IosWaitlist />
       <Testimonials />
       <Pricing />
-      {/* <FoundersPass /> */}
       <BlogPreview />
       <Faq />
       <Cta />
@@ -31,4 +29,3 @@ export default function Home() {
     </main>
   );
 }
-

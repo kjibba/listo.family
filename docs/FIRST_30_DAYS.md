@@ -156,7 +156,7 @@ Steg: "Se hvordan automatisering fungerer"
 
 | Feature | Gratis (etter 14 dager) | Premium |
 |---------|-------------------------|---------|
-| Kalender | Denne + forrige uke | Ubegrenset |
+| Kalender | Denne + neste uke | Ubegrenset |
 | AI-forslag | 3 per uke | Ubegrenset |
 | Oppskrifter | Maks 20 | Ubegrenset |
 | Steder | 1 (hjemme) | Ubegrenset |
