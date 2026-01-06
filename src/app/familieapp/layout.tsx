@@ -1,29 +1,33 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Familieapp for Norge | Organiser hverdagen sammen | listo.family",
+    title: "Familieapp | Organisere familien enkelt | listo.family",
     description:
-        "Den komplette familieappen for norske familier! ✓ Delt kalender ✓ Middagsplanlegger ✓ Handleliste ✓ Gjøremål for barn. Alt samlet på ett sted. Gratis!",
+        "Sliter du med å holde orden på familien? ✓ Organisere familien på ett sted ✓ Hverdagslogistikk som fungerer ✓ Delt kalender, middagsplan og gjøremål. Gratis app for familier!",
     keywords: [
         "familieapp",
-        "familieapp gratis",
+        "organisere familien",
+        "holde orden på familien",
+        "familieorganisering",
         "familieorganisering app",
+        "hverdagslogistikk familie",
         "familie kalender app",
-        "organiser familien",
         "familieplanlegger",
         "app for familier",
         "familie todo app",
         "delt kalender familie",
         "gjøremål barn app",
-        "familiens app",
+        "familieapp gratis",
+        "organisering familie",
+        "styre familien",
     ],
     alternates: {
         canonical: "/familieapp",
     },
     openGraph: {
-        title: "Familieapp for Norge | listo.family",
+        title: "Familieapp | Organisere familien enkelt | listo.family",
         description:
-            "Den komplette familieappen! Middagsplanlegger, handleliste, og gjøremål - alt synkronisert for hele familien.",
+            "Sliter du med hverdagslogistikken? Organisere familien med én app - middagsplan, handleliste og gjøremål synkronisert.",
         url: "https://listo.family/familieapp",
         siteName: "listo.family",
         locale: "nb_NO",
@@ -33,14 +37,14 @@ export const metadata: Metadata = {
                 url: "/images/og-familieapp.png",
                 width: 1200,
                 height: 630,
-                alt: "listo.family - Familieappen for norske familier",
+                alt: "listo.family - Organisere familien enkelt",
             },
         ],
     },
     twitter: {
         card: "summary_large_image",
-        title: "Familieapp for Norge | listo.family",
-        description: "Den komplette familieappen! Middagsplanlegger, handleliste, og gjøremål.",
+        title: "Familieapp | Organisere familien enkelt | listo.family",
+        description: "Sliter du med hverdagslogistikken? Organisere familien enkelt med Listo!",
         images: ["/images/og-familieapp.png"],
     },
 };
