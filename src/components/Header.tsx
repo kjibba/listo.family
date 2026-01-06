@@ -5,10 +5,9 @@ import Link from "next/link";
 import { Menu, X, Sparkles } from "lucide-react";
 
 const navLinks = [
-  { href: "#features", label: "Funksjoner" },
-  { href: "#ai", label: "AI-Assistenten" },
-  { href: "#how-it-works", label: "Slik fungerer det" },
-  { href: "#pricing", label: "Priser" },
+  { href: "/middagsplanlegger", label: "Middagsplanlegger" },
+  { href: "/handleliste", label: "Handleliste" },
+  { href: "/familieapp", label: "Familieapp" },
   { href: "/blogg", label: "Blogg" },
 ];
 
@@ -27,8 +26,8 @@ export default function Header() {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-          ? "bg-white/95 backdrop-blur-lg shadow-md py-3"
-          : "bg-white/80 backdrop-blur-sm shadow-sm py-4"
+        ? "bg-white/95 backdrop-blur-lg shadow-md py-3"
+        : "bg-white/80 backdrop-blur-sm shadow-sm py-4"
         }`}
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

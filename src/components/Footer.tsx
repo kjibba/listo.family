@@ -3,10 +3,11 @@ import { Mail, MapPin, Brain } from "lucide-react";
 
 const footerLinks = {
   product: [
-    { label: "Funksjoner", href: "#features" },
     { label: "Middagsplanlegger", href: "/middagsplanlegger" },
-    { label: "AI-Assistenten", href: "#ai" },
-    { label: "Priser", href: "#pricing" },
+    { label: "Handleliste", href: "/handleliste" },
+    { label: "Ukemeny", href: "/ukemeny" },
+    { label: "Oppskrifter", href: "/oppskrifter" },
+    { label: "Familieapp", href: "/familieapp" },
   ],
   resources: [
     { label: "Blogg", href: "/blogg" },
@@ -125,7 +126,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="mt-16 pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-white/40 text-sm">
-            © 2025 listo.family. Alle rettigheter reservert.
+            © 2026 listo.family. Alle rettigheter reservert.
           </p>
           <p className="flex items-center gap-1.5 text-white/40 text-sm">
             Laget med <Brain className="w-4 h-4" /> i Norge
