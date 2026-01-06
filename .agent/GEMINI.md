@@ -65,6 +65,14 @@ Each landing page section follows this pattern (see Features component):
 - Add `"use client"` only for: Framer Motion animations, interactive elements, event handlers
 - See Hero component for client component pattern
 
+## Code Cleanup (IMPORTANT)
+When modifying, upgrading, or refactoring code and features:
+- **ALWAYS** remove old, obsolete, and redundant code
+- Delete unused imports, functions, components, and files
+- Remove deprecated patterns when introducing replacements
+- Keep the codebase as lean as possible
+- Don't leave commented-out code "for later"
+
 ## Blog Articles
 Blog posts live in the blogg directory with dynamic routes. Article metadata defined inline in the blog page. Each article page exports:
 - `metadata` object for SEO

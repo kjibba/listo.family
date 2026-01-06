@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Gratis Middagsplanlegger Uke | Planlegg ukemenyen | listo.family",
+  title: "Middagsplanlegger App Gratis | Planlegg ukemenyen på 5 min | listo.family",
   description:
-    "Den beste middagsplanlegger for uke! Planlegg 7 dagers middager på under 5 minutter. Automatisk handleliste, AI-forslag, og sanntidssynk med hele familien. 100% gratis!",
+    "Sliter du med 'hva skal vi ha til middag'? ✓ Planlegg hele uken på 5 min ✓ Automatisk handleliste ✓ AI-forslag ✓ Synk med familien. Prøv gratis nå!",
   keywords: [
     "middagsplanlegger uke",
     "middagsplanlegger",
@@ -24,9 +24,9 @@ export const metadata: Metadata = {
     canonical: "/middagsplanlegger",
   },
   openGraph: {
-    title: "Gratis Middagsplanlegger Uke | listo.family",
+    title: "Middagsplanlegger App Gratis | listo.family",
     description:
-      "Planlegg ukens middager på under 5 minutter. Automatisk handleliste, AI-forslag, og synk med familien.",
+      "Sliter du med 'hva skal vi ha til middag'? Planlegg ukens middager på 5 minutter med automatisk handleliste og AI-forslag.",
     url: "https://listo.family/middagsplanlegger",
     siteName: "listo.family",
     locale: "nb_NO",
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Gratis Middagsplanlegger Uke | listo.family",
+    title: "Middagsplanlegger App Gratis | listo.family",
     description: "Planlegg ukens middager på 5 minutter. Automatisk handleliste og AI-forslag!",
     images: ["/images/og-middagsplanlegger.png"],
   },
