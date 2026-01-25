@@ -9,7 +9,7 @@ const steps = [
     icon: UserPlus,
     title: "Opprett familien",
     description:
-      "Åpne web-appen (app.listo.family), opprett en familie og inviter partneren med en lenke. Legg til barnas preferanser og allergier. Android og iOS kommer snart!",
+      "Samle flokken din i appen. Legg inn hva barna liker (og ikke liker), så husker Listo det for deg.",
     screenshot: "/screenshots/planner.png",
     color: "listo",
   },
@@ -18,7 +18,7 @@ const steps = [
     icon: CalendarDays,
     title: "Planlegg uken",
     description:
-      "Legg inn middager, aktiviteter og oppgaver. Fordel ansvar mellom familiemedlemmer. På travle dager med fotballtrening foreslår appen raske middager.",
+      "Fyll ukesplanen med middager og aktiviteter. Når fotballtreningen krasjer med middagen, foreslår vi løsninger som sparer tid.",
     screenshot: "/screenshots/planner.png",
     color: "salmon",
   },
@@ -27,7 +27,7 @@ const steps = [
     icon: ShoppingBag,
     title: "Handle smart",
     description:
-      "Trykk 'Legg til i handleliste', og alle ingredienser er klare. I butikken er alt sortert etter rekkefølgen du går – og familien kan legge til i sanntid.",
+      "Handlelisten skriver seg selv basert på ukesplanen. Og det beste? Listen sorteres automatisk etter butikken du står i.",
     screenshot: "/screenshots/store-mode.png",
     color: "sky",
   },
@@ -36,7 +36,7 @@ const steps = [
     icon: UtensilsCrossed,
     title: "Lag maten",
     description:
-      "Åpne oppskriften, juster porsjoner, og følg stegene. Cook mode holder skjermen våken mens du lager middagen.",
+      "Når det er din tur til å lage middag, har du alt du trenger: Oppskrift, porsjoner og fremgangsmåte – rett på skjermen.",
     screenshot: "/screenshots/recipe.png",
     color: "magic",
   },
@@ -56,13 +56,13 @@ export default function HowItWorks() {
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="inline-block px-4 py-1.5 bg-white text-charcoal rounded-full text-sm font-medium mb-4 shadow-sm">
-            Slik fungerer det
+            Slik hjelper Listo deg
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-charcoal mb-6">
-            Fra kaos til kontroll på minutter
+            Få oversikten tilbake
           </h2>
           <p className="text-lg text-charcoal-light">
-            Fire enkle steg til en helt ny hverdag. Kom i gang på under 5 minutter.
+            Fire enkle steg for å samle trådene.
           </p>
         </div>
 
@@ -114,8 +114,8 @@ export default function HowItWorks() {
                     {/* Decorative blob */}
                     <div
                       className={`absolute -z-10 w-48 h-48 rounded-full blur-3xl ${isEven
-                          ? `-bottom-8 -right-8 ${colors.blob}`
-                          : `-bottom-8 -left-8 ${colors.blob}`
+                        ? `-bottom-8 -right-8 ${colors.blob}`
+                        : `-bottom-8 -left-8 ${colors.blob}`
                         }`}
                     />
                   </div>

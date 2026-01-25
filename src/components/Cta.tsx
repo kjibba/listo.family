@@ -362,7 +362,7 @@ export default function Cta() {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full py-3.5 px-6 bg-gradient-to-r from-listo-500 to-listo-600 hover:from-listo-600 hover:to-listo-700 disabled:from-listo-300 disabled:to-listo-400 text-white font-semibold rounded-squircle-sm shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2"
+                    className="w-full py-3.5 px-6 bg-gradient-to-r from-listo-500 to-listo-600 hover:from-listo-600 hover:to-listo-700 disabled:from-listo-300 disabled:to-listo-400 text-white font-semibold rounded-squircle shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2"
                   >
                     {isLoading ? (
                       "Sender..."

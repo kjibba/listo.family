@@ -2,39 +2,72 @@
 
 import { useState, useEffect } from "react";
 import { collection, query, onSnapshot, doc, setDoc, Timestamp } from "firebase/firestore";
-import { Shield, CheckCircle, Clock, Users, Mail, Search, UserCheck, UserX, Sparkles } from "lucide-react";
+import { Shield, CheckCircle, Clock, Users, Mail, Search, Sparkles, Send } from "lucide-react";
 import { useAdminData, formatDate } from "../layout";
 
-interface BetaUser {
-  email: string;
-  approved: boolean;
-  addedDate: Timestamp;
-  invitedBy: string;
-  note?: string;
+interface BetaInterest {
+    id: string;
+    name: string;
+    email: string;
+    familySize?: string; // Deprecated in Phase 3
+    source: string;
+    userType: "free_beta" | "trial";
+    position: number | null;
+    createdAt: Timestamp;
+    welcomeEmailSent?: boolean;
+    welcomeEmailSentAt?: Timestamp;
+    androidBetaInviteSent?: boolean;
+    androidBetaInviteSentAt?: Timestamp;
+    trialStartDate?: Timestamp;
+    trialExpiresAt?: Timestamp;
 }
 
-interface WaitlistUser {
-  email: string;
-  addedDate: Timestamp;
-  source: string;
+interface BetaUser {
+    email: string;
+    approved: boolean;
+    addedDate: Timestamp;
+    invitedBy: string;
+    note?: string;
 }
 
 interface AppUser {
-  email: string;
-  displayName?: string;
-  familyId?: string;
-  createdAt?: Timestamp;
+    email: string;
+    displayName?: string;
+    familyId?: string;
+    createdAt?: Timestamp;
 }
 
 export default function BetaPage() {
     const { db } = useAdminData();
     const [betaUsers, setBetaUsers] = useState<BetaUser[]>([]);
-    const [waitlistUsers, setWaitlistUsers] = useState<WaitlistUser[]>([]);
+    const [betaInterest, setBetaInterest] = useState<BetaInterest[]>([]);
     const [appUsers, setAppUsers] = useState<AppUser[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState<string | null>(null);
-    const [activeTab, setActiveTab] = useState<"users" | "waitlist">("users");
+    const [activeTab, setActiveTab] = useState<"interest" | "users">("interest");
+
+    // Subscribe to beta_interest (new signups from landing page)
+    useEffect(() => {
+        const q = query(collection(db, "beta_interest"));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const interests: BetaInterest[] = [];
+            snapshot.forEach((doc) => {
+                interests.push({ id: doc.id, ...doc.data() } as BetaInterest);
+            });
+            // Sort by createdAt descending (newest first)
+            setBetaInterest(interests.sort((a, b) => {
+                const aTime = a.createdAt?.toMillis() || 0;
+                const bTime = b.createdAt?.toMillis() || 0;
+                return bTime - aTime;
+            }));
+            setLoading(false);
+        }, (error) => {
+            console.error("Error loading beta_interest:", error);
+            setLoading(false);
+        });
+        return () => unsubscribe();
+    }, [db]);
 
     // Subscribe to beta users
     useEffect(() => {
@@ -44,29 +77,9 @@ export default function BetaPage() {
             snapshot.forEach((doc) => {
                 users.push({ email: doc.id, ...doc.data() } as BetaUser);
             });
-            console.log("BetaUsers loaded:", users.length, users);
             setBetaUsers(users);
-            setLoading(false);
         }, (error) => {
             console.error("Error loading betaUsers:", error);
-            setLoading(false);
-        });
-        return () => unsubscribe();
-    }, [db]);
-
-    // Subscribe to waitlist
-    useEffect(() => {
-        const q = query(collection(db, "waitlist"));
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            const users: WaitlistUser[] = [];
-            snapshot.forEach((doc) => {
-                users.push({ email: doc.id, ...doc.data() } as WaitlistUser);
-            });
-            setWaitlistUsers(users.sort((a, b) => {
-                const aTime = a.addedDate?.toMillis() || 0;
-                const bTime = b.addedDate?.toMillis() || 0;
-                return bTime - aTime;
-            }));
         });
         return () => unsubscribe();
     }, [db]);
@@ -136,10 +149,84 @@ export default function BetaPage() {
         }
     };
 
+    const sendAndroidBetaInvite = async (interest: BetaInterest) => {
+        if (!confirm(`Send Android beta-invitasjon til ${interest.email}?\n\nDu må først ha lagt til ${interest.email} i Play Console som beta-tester.`)) return;
+
+        setActionLoading(interest.email);
+        try {
+            // Call Firebase Cloud Function
+            const response = await fetch('https://us-central1-listo-6443c.cloudfunctions.net/sendAndroidBetaInvite', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    data: {
+                        email: interest.email,
+                        name: interest.name
+                    }
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to send invitation');
+            }
+
+            // Update Firestore to mark as sent
+            const interestRef = doc(db, "beta_interest", interest.id);
+            await setDoc(interestRef, {
+                androidBetaInviteSent: true,
+                androidBetaInviteSentAt: Timestamp.now(),
+            }, { merge: true });
+
+            alert(`✅ Android beta-invitasjon sendt til ${interest.email}!`);
+        } catch (error) {
+            console.error("Error sending Android beta invite:", error);
+            alert("Feil ved sending av invitasjon. Sjekk konsollen for detaljer.");
+        } finally {
+            setActionLoading(null);
+        }
+    };
+
     const isBetaApproved = (email: string) => {
         const found = betaUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
-        console.log(`Checking beta for ${email}:`, found);
         return found?.approved === true;
+    };
+
+    const deleteTestUser = async (email: string) => {
+        if (!confirm(`⚠️ ADVARSEL: Dette vil permanent slette:\n\n- Bruker fra Firebase Auth\n- Brukerdata fra Firestore\n- Beta-påmelding\n\nEr du sikker på at du vil slette ${email}?`)) return;
+
+        setActionLoading(email);
+        try {
+            // Call Firebase Cloud Function
+            const response = await fetch('https://us-central1-listo-6443c.cloudfunctions.net/deleteTestUser', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    data: { email }
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete user');
+            }
+
+            const result = await response.json();
+            console.log('Delete result:', result);
+
+            let message = `✅ Bruker slettet:\n`;
+            if (result.result.authDeleted) message += `- Firebase Auth ✓\n`;
+            if (result.result.firestoreDeleted) message += `- Firestore ✓\n`;
+            if (result.result.betaInterestDeleted) message += `- Beta-påmelding ✓\n`;
+            if (result.result.errors.length > 0) {
+                message += `\n⚠️ Feil:\n${result.result.errors.join('\n')}`;
+            }
+
+            alert(message);
+        } catch (error) {
+            console.error("Error deleting user:", error);
+            alert("Feil ved sletting av bruker. Sjekk konsollen for detaljer.");
+        } finally {
+            setActionLoading(null);
+        }
     };
 
     const filteredAppUsers = appUsers.filter(user =>
@@ -147,9 +234,14 @@ export default function BetaPage() {
         user.displayName?.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const filteredWaitlist = waitlistUsers.filter(user =>
-        user.email.toLowerCase().includes(searchQuery.toLowerCase())
+    const filteredBetaInterest = betaInterest.filter(interest =>
+        interest.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        interest.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    // Calculate stats
+    const freeBetaCount = betaInterest.filter(i => i.userType === "free_beta").length;
+    const trialCount = betaInterest.filter(i => i.userType === "trial").length;
 
     if (loading) {
         return (
@@ -170,7 +262,7 @@ export default function BetaPage() {
                             Beta Tilgangsstyring
                         </h1>
                         <p className="text-charcoal-light">
-                            Administrer hvem som har tilgang til listo.family beta
+                            Administrer beta-påmeldinger og Android beta-invitasjoner
                         </p>
                     </div>
                 </div>
@@ -179,17 +271,19 @@ export default function BetaPage() {
                 <div className="grid grid-cols-3 gap-4 mt-6">
                     <div className="bg-listo-50 rounded-squircle-sm p-4 border border-listo-200">
                         <div className="flex items-center gap-2 mb-1">
-                            <CheckCircle className="w-5 h-5 text-listo-600" />
-                            <span className="text-sm font-medium text-charcoal-light">Beta-godkjent</span>
+                            <Sparkles className="w-5 h-5 text-listo-600" />
+                            <span className="text-sm font-medium text-charcoal-light">Free Beta</span>
                         </div>
-                        <p className="text-3xl font-bold text-listo-700">{betaUsers.filter(u => u.approved).length}</p>
+                        <p className="text-3xl font-bold text-listo-700">{freeBetaCount}</p>
+                        <p className="text-xs text-charcoal-light mt-1">av 30 plasser</p>
                     </div>
                     <div className="bg-salmon-50 rounded-squircle-sm p-4 border border-salmon-200">
                         <div className="flex items-center gap-2 mb-1">
                             <Clock className="w-5 h-5 text-salmon-600" />
-                            <span className="text-sm font-medium text-charcoal-light">På venteliste</span>
+                            <span className="text-sm font-medium text-charcoal-light">Trial</span>
                         </div>
-                        <p className="text-3xl font-bold text-salmon-700">{waitlistUsers.length}</p>
+                        <p className="text-3xl font-bold text-salmon-700">{trialCount}</p>
+                        <p className="text-xs text-charcoal-light mt-1">14-dagers prøve</p>
                     </div>
                     <div className="bg-sky-50 rounded-squircle-sm p-4 border border-sky-200">
                         <div className="flex items-center gap-2 mb-1">
@@ -215,31 +309,153 @@ export default function BetaPage() {
                 {/* Tabs */}
                 <div className="flex gap-2 mt-6 border-b border-charcoal/10">
                     <button
-                        onClick={() => setActiveTab("users")}
-                        className={`px-4 py-2 font-medium transition-colors relative ${activeTab === "users"
-                                ? "text-listo-600"
-                                : "text-charcoal-light hover:text-charcoal"
+                        onClick={() => setActiveTab("interest")}
+                        className={`px-4 py-2 font-medium transition-colors relative ${activeTab === "interest"
+                            ? "text-listo-600"
+                            : "text-charcoal-light hover:text-charcoal"
                             }`}
                     >
-                        Alle brukere ({filteredAppUsers.length})
-                        {activeTab === "users" && (
+                        Beta-påmeldinger ({filteredBetaInterest.length})
+                        {activeTab === "interest" && (
                             <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-listo-500" />
                         )}
                     </button>
                     <button
-                        onClick={() => setActiveTab("waitlist")}
-                        className={`px-4 py-2 font-medium transition-colors relative ${activeTab === "waitlist"
-                                ? "text-salmon-600"
-                                : "text-charcoal-light hover:text-charcoal"
+                        onClick={() => setActiveTab("users")}
+                        className={`px-4 py-2 font-medium transition-colors relative ${activeTab === "users"
+                            ? "text-salmon-600"
+                            : "text-charcoal-light hover:text-charcoal"
                             }`}
                     >
-                        Venteliste ({filteredWaitlist.length})
-                        {activeTab === "waitlist" && (
+                        Alle brukere ({filteredAppUsers.length})
+                        {activeTab === "users" && (
                             <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-salmon-500" />
                         )}
                     </button>
                 </div>
             </div>
+
+            {/* Beta Interest Tab */}
+            {activeTab === "interest" && (
+                <div className="bg-white rounded-squircle border border-charcoal/5 shadow-sm overflow-hidden">
+                    <div className="p-6 border-b border-charcoal/5">
+                        <h2 className="text-xl font-bold text-charcoal flex items-center gap-2">
+                            <Mail className="w-5 h-5" />
+                            Beta-påmeldinger ({filteredBetaInterest.length})
+                        </h2>
+                        <p className="text-sm text-charcoal-light mt-1">
+                            Brukere som har meldt seg på via listo.family
+                        </p>
+                    </div>
+                    <div className="overflow-x-auto">
+                        <table className="w-full">
+                            <thead className="bg-cream-50 border-b border-charcoal/5">
+                                <tr>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-charcoal-light uppercase tracking-wider">
+                                        Bruker
+                                    </th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-charcoal-light uppercase tracking-wider">
+                                        Type
+                                    </th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-charcoal-light uppercase tracking-wider">
+                                        Registrert
+                                    </th>
+                                    <th className="text-left px-6 py-3 text-xs font-semibold text-charcoal-light uppercase tracking-wider">
+                                        Status
+                                    </th>
+                                    <th className="text-right px-6 py-3 text-xs font-semibold text-charcoal-light uppercase tracking-wider">
+                                        Handling
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-charcoal/5">
+                                {filteredBetaInterest.map((interest) => (
+                                    <tr key={interest.id} className="hover:bg-cream-50 transition-colors">
+                                        <td className="px-6 py-4">
+                                            <div>
+                                                <div className="font-medium text-charcoal">
+                                                    {interest.name}
+                                                </div>
+                                                <div className="text-sm text-charcoal-light">{interest.email}</div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {interest.userType === "free_beta" ? (
+                                                <span className="inline-flex items-center gap-1 px-3 py-1 bg-listo-100 text-listo-700 rounded-full text-xs font-semibold">
+                                                    <Sparkles className="w-3 h-3" />
+                                                    Free Beta #{interest.position}
+                                                </span>
+                                            ) : (
+                                                <span className="inline-flex items-center gap-1 px-3 py-1 bg-salmon-100 text-salmon-700 rounded-full text-xs font-semibold">
+                                                    <Clock className="w-3 h-3" />
+                                                    14-dagers prøve
+                                                </span>
+                                            )}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-charcoal-light">
+                                            {formatDate(interest.createdAt)}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="space-y-1">
+                                                {interest.welcomeEmailSent && (
+                                                    <div className="flex items-center gap-1 text-xs text-listo-600">
+                                                        <CheckCircle className="w-3 h-3" />
+                                                        Velkomst-e-post sendt
+                                                    </div>
+                                                )}
+                                                {interest.androidBetaInviteSent && (
+                                                    <div className="flex items-center gap-1 text-xs text-sky-600">
+                                                        <CheckCircle className="w-3 h-3" />
+                                                        Android-invitasjon sendt
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 text-right">
+                                            <div className="flex items-center gap-2 justify-end">
+                                                {!interest.androidBetaInviteSent ? (
+                                                    <button
+                                                        onClick={() => sendAndroidBetaInvite(interest)}
+                                                        disabled={actionLoading === interest.email}
+                                                        className="px-4 py-2 bg-sky-100 hover:bg-sky-200 text-sky-700 text-sm font-medium rounded-squircle-sm transition-colors disabled:opacity-50 flex items-center gap-2"
+                                                    >
+                                                        {actionLoading === interest.email ? (
+                                                            "⏳"
+                                                        ) : (
+                                                            <>
+                                                                <Send className="w-4 h-4" />
+                                                                Send Android-invitasjon
+                                                            </>
+                                                        )}
+                                                    </button>
+                                                ) : (
+                                                    <span className="text-sm text-charcoal-light">
+                                                        Invitasjon sendt {interest.androidBetaInviteSentAt && formatDate(interest.androidBetaInviteSentAt)}
+                                                    </span>
+                                                )}
+                                                <button
+                                                    onClick={() => deleteTestUser(interest.email)}
+                                                    disabled={actionLoading === interest.email}
+                                                    className="px-3 py-2 bg-red-100 hover:bg-red-200 text-red-700 text-sm font-medium rounded-squircle-sm transition-colors disabled:opacity-50"
+                                                    title="Slett testbruker"
+                                                >
+                                                    {actionLoading === interest.email ? "⏳" : "🗑️"}
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        {filteredBetaInterest.length === 0 && (
+                            <div className="text-center py-12 text-charcoal-light">
+                                <Mail className="w-12 h-12 mx-auto mb-3 opacity-20" />
+                                <p>Ingen beta-påmeldinger funnet</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
 
             {/* All App Users Tab */}
             {activeTab === "users" && (
@@ -303,29 +519,39 @@ export default function BetaPage() {
                                                     </span>
                                                 ) : (
                                                     <span className="inline-flex items-center gap-1 px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold">
-                                                        <UserX className="w-3 h-3" />
+                                                        <Clock className="w-3 h-3" />
                                                         Ikke godkjent
                                                     </span>
                                                 )}
                                             </td>
                                             <td className="px-6 py-4 text-right">
-                                                {hasAccess ? (
+                                                <div className="flex items-center gap-2 justify-end">
+                                                    {hasAccess ? (
+                                                        <button
+                                                            onClick={() => revokeAccess(user.email)}
+                                                            disabled={actionLoading === user.email}
+                                                            className="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 text-sm font-medium rounded-squircle-sm transition-colors disabled:opacity-50"
+                                                        >
+                                                            {actionLoading === user.email ? "⏳" : "Fjern tilgang"}
+                                                        </button>
+                                                    ) : (
+                                                        <button
+                                                            onClick={() => approveUser(user.email)}
+                                                            disabled={actionLoading === user.email}
+                                                            className="px-4 py-2 bg-listo-100 hover:bg-listo-200 text-listo-700 text-sm font-medium rounded-squircle-sm transition-colors disabled:opacity-50"
+                                                        >
+                                                            {actionLoading === user.email ? "⏳" : "✓ Godkjenn"}
+                                                        </button>
+                                                    )}
                                                     <button
-                                                        onClick={() => revokeAccess(user.email)}
+                                                        onClick={() => deleteTestUser(user.email)}
                                                         disabled={actionLoading === user.email}
-                                                        className="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 text-sm font-medium rounded-squircle-sm transition-colors disabled:opacity-50"
+                                                        className="px-3 py-2 bg-red-100 hover:bg-red-200 text-red-700 text-sm font-medium rounded-squircle-sm transition-colors disabled:opacity-50"
+                                                        title="Slett testbruker"
                                                     >
-                                                        {actionLoading === user.email ? "⏳" : "Fjern tilgang"}
+                                                        {actionLoading === user.email ? "⏳" : "🗑️"}
                                                     </button>
-                                                ) : (
-                                                    <button
-                                                        onClick={() => approveUser(user.email)}
-                                                        disabled={actionLoading === user.email}
-                                                        className="px-4 py-2 bg-listo-100 hover:bg-listo-200 text-listo-700 text-sm font-medium rounded-squircle-sm transition-colors disabled:opacity-50"
-                                                    >
-                                                        {actionLoading === user.email ? "⏳" : "✓ Godkjenn"}
-                                                    </button>
-                                                )}
+                                                </div>
                                             </td>
                                         </tr>
                                     );
@@ -336,79 +562,6 @@ export default function BetaPage() {
                             <div className="text-center py-12 text-charcoal-light">
                                 <Users className="w-12 h-12 mx-auto mb-3 opacity-20" />
                                 <p>Ingen brukere funnet</p>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            )}
-
-            {/* Waitlist Tab */}
-            {activeTab === "waitlist" && (
-                <div className="bg-white rounded-squircle border border-charcoal/5 shadow-sm overflow-hidden">
-                    <div className="p-6 border-b border-charcoal/5">
-                        <h2 className="text-xl font-bold text-charcoal flex items-center gap-2">
-                            <Clock className="w-5 h-5" />
-                            Venteliste ({filteredWaitlist.length})
-                        </h2>
-                        <p className="text-sm text-charcoal-light mt-1">
-                            Brukere som ikke har beta-tilgang ennå
-                        </p>
-                    </div>
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead className="bg-cream-50 border-b border-charcoal/5">
-                                <tr>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-charcoal-light uppercase tracking-wider">
-                                        E-post
-                                    </th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-charcoal-light uppercase tracking-wider">
-                                        Kilde
-                                    </th>
-                                    <th className="text-left px-6 py-3 text-xs font-semibold text-charcoal-light uppercase tracking-wider">
-                                        Lagt til
-                                    </th>
-                                    <th className="text-right px-6 py-3 text-xs font-semibold text-charcoal-light uppercase tracking-wider">
-                                        Handling
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-charcoal/5">
-                                {filteredWaitlist.map((user) => (
-                                    <tr key={user.email} className="hover:bg-cream-50 transition-colors">
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-2">
-                                                <Mail className="w-4 h-4 text-charcoal-light" />
-                                                <span className="font-medium text-charcoal">{user.email}</span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${user.source === "signup"
-                                                    ? "bg-sky-100 text-sky-700"
-                                                    : "bg-magic-100 text-magic-700"
-                                                }`}>
-                                                {user.source === "signup" ? "App signup" : "Landing page"}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 text-sm text-charcoal-light">
-                                            {formatDate(user.addedDate)}
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <button
-                                                onClick={() => approveUser(user.email)}
-                                                disabled={actionLoading === user.email}
-                                                className="px-4 py-2 bg-listo-100 hover:bg-listo-200 text-listo-700 text-sm font-medium rounded-squircle-sm transition-colors disabled:opacity-50"
-                                            >
-                                                {actionLoading === user.email ? "⏳" : "✓ Godkjenn"}
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                        {filteredWaitlist.length === 0 && (
-                            <div className="text-center py-12 text-charcoal-light">
-                                <Clock className="w-12 h-12 mx-auto mb-3 opacity-20" />
-                                <p>Ingen på venteliste</p>
                             </div>
                         )}
                     </div>

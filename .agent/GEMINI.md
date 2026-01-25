@@ -3,6 +3,17 @@
 ## Project Overview
 Norwegian (nb) landing page for listo.family - a family assistant app for meal planning, shopping lists, and task management. Built with Next.js 14 (App Router), TypeScript, Tailwind CSS, and Framer Motion.
 
+## 🚨 CRITICAL: Documentation & State Management (READ FIRST)
+**Before writing a single line of code or planning a feature:**
+1.  **Check the Map:** Read `Docs/FEATURES.md` and `Docs/PENDING_FEATURES.md` (in listo-app repo if shared, or local docs).
+2.  **Verify State:** Do not assume a feature is missing. Check `CHANGELOG.md` and `FEATURES.md`.
+3.  **Update Strategy:** If you implement something, you **MUST** update the tracking documents.
+4.  **Single Source of Truth:** These documents are the truth.
+
+## 🤖 Antigravity Kit & Context7
+- **Use the Kit:** Actively use agents and skills.
+- **Context7:** Use Context7 for all library documentation.
+
 **Live site:** https://listo.family
 
 ## Branding & Naming Convention
