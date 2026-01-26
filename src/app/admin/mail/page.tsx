@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Mail, RefreshCw, Send, Eye, Clock, Paperclip, Reply, AlertCircle, CheckCircle, Inbox, ChevronLeft, Key } from "lucide-react";
+import { Mail, RefreshCw, Send, Eye, Clock, Paperclip, Reply, AlertCircle, CheckCircle, Inbox, ChevronLeft } from "lucide-react";
 
 interface Email {
     uid: number;
@@ -22,6 +22,7 @@ interface Email {
 }
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://listo.family";
+const ADMIN_KEY = "listo-admin-2024"; // Same as other admin pages
 
 export default function AdminMailPage() {
     const [emails, setEmails] = useState<Email[]>([]);
@@ -30,8 +31,6 @@ export default function AdminMailPage() {
     const [selectedEmail, setSelectedEmail] = useState<Email | null>(null);
     const [showCompose, setShowCompose] = useState(false);
     const [replyMode, setReplyMode] = useState(false);
-    const [adminKey, setAdminKey] = useState<string>("");
-    const [showKeyInput, setShowKeyInput] = useState(false);
 
     // Compose state
     const [composeTo, setComposeTo] = useState("");
@@ -40,62 +39,31 @@ export default function AdminMailPage() {
     const [sending, setSending] = useState(false);
     const [sendSuccess, setSendSuccess] = useState(false);
 
-    // Load admin key from localStorage on mount
-    useEffect(() => {
-        const stored = localStorage.getItem("listo-admin-key");
-        if (stored) {
-            setAdminKey(stored);
-        } else {
-            setShowKeyInput(true);
-        }
-    }, []);
-
-    const saveAdminKey = () => {
-        if (adminKey.trim()) {
-            localStorage.setItem("listo-admin-key", adminKey.trim());
-            setShowKeyInput(false);
-            fetchEmails();
-        }
-    };
-
     const fetchEmails = useCallback(async () => {
         setLoading(true);
         setError(null);
         try {
-            const storedKey = localStorage.getItem("listo-admin-key");
-            if (!storedKey) {
-                setShowKeyInput(true);
-                setLoading(false);
-                return;
-            }
-
             const res = await fetch(`${API_URL}/api/admin/emails?limit=50`, {
-                headers: { "x-admin-key": storedKey }
+                headers: { "X-Admin-Key": ADMIN_KEY }
             });
 
             if (!res.ok) {
                 const data = await res.json();
-                if (res.status === 401) {
-                    setShowKeyInput(true);
-                    localStorage.removeItem("listo-admin-key");
-                }
                 throw new Error(data.error || "Kunne ikke hente e-poster");
             }
 
             const data = await res.json();
             setEmails(data.emails || []);
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : "Ukjent feil");
         } finally {
             setLoading(false);
         }
     }, []);
 
     useEffect(() => {
-        if (!showKeyInput) {
-            fetchEmails();
-        }
-    }, [fetchEmails, showKeyInput]);
+        fetchEmails();
+    }, [fetchEmails]);
 
     const handleSelectEmail = async (email: Email) => {
         setSelectedEmail(email);
@@ -105,12 +73,11 @@ export default function AdminMailPage() {
         // Mark as read if not already
         if (!email.isRead) {
             try {
-                const adminKey = localStorage.getItem("listo-admin-key");
                 await fetch(`${API_URL}/api/admin/emails/mark-read`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        "x-admin-key": adminKey || ""
+                        "X-Admin-Key": ADMIN_KEY
                     },
                     body: JSON.stringify({ uid: email.uid })
                 });
@@ -143,12 +110,11 @@ export default function AdminMailPage() {
         setSendSuccess(false);
 
         try {
-            const adminKey = localStorage.getItem("listo-admin-key");
             const res = await fetch(`${API_URL}/api/admin/emails/send`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "x-admin-key": adminKey || ""
+                    "X-Admin-Key": ADMIN_KEY
                 },
                 body: JSON.stringify({
                     to: composeTo,
@@ -195,40 +161,6 @@ export default function AdminMailPage() {
     };
 
     const unreadCount = emails.filter(e => !e.isRead).length;
-
-    // Show admin key input if not set
-    if (showKeyInput) {
-        return (
-            <div className="flex items-center justify-center min-h-[400px]">
-                <div className="bg-white rounded-squircle p-8 shadow-lg border border-charcoal/10 max-w-md w-full">
-                    <div className="text-center mb-6">
-                        <Key className="w-12 h-12 text-magic-500 mx-auto mb-3" />
-                        <h2 className="text-xl font-bold text-charcoal">Admin-nøkkel kreves</h2>
-                        <p className="text-charcoal-light text-sm mt-1">
-                            Skriv inn admin-nøkkelen for å få tilgang til e-post
-                        </p>
-                    </div>
-                    <div className="space-y-4">
-                        <input
-                            type="password"
-                            value={adminKey}
-                            onChange={(e) => setAdminKey(e.target.value)}
-                            onKeyDown={(e) => e.key === "Enter" && saveAdminKey()}
-                            placeholder="Admin-nøkkel"
-                            className="w-full px-4 py-3 border border-charcoal/20 rounded-squircle-sm focus:border-magic-500 focus:ring-2 focus:ring-magic-500/20 outline-none"
-                        />
-                        <button
-                            onClick={saveAdminKey}
-                            disabled={!adminKey.trim()}
-                            className="w-full py-3 bg-gradient-to-r from-magic-500 to-magic-600 text-white font-semibold rounded-squircle-sm hover:from-magic-600 hover:to-magic-700 transition-colors disabled:opacity-50"
-                        >
-                            Lagre og fortsett
-                        </button>
-                    </div>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div className="space-y-6">
