@@ -12,7 +12,7 @@ Norwegian (nb) landing page for listo.family - a family assistant app for meal p
 
 ## 🤖 Antigravity Kit & Context7
 - **Use the Kit:** Actively use agents and skills.
-- **Context7:** Use Context7 for all library documentation.
+- **Context7:** Always use Context7 MCP when I need library/API documentation, code generation, setup or configuration steps without me having to explicitly ask.
 
 **Live site:** https://listo.family
 
