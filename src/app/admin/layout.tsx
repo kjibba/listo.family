@@ -139,6 +139,46 @@ function AdminLoginForm({ onSuccess }: { onSuccess: () => void }) {
 }
 
 // Types
+export interface UserDocument {
+    id: string;
+    email: string | null;
+    displayName: string | null;
+    photoURL: string | null;
+    createdAt: Timestamp;
+    authProvider: "email" | "google" | "apple";
+    
+    // Journey tracking
+    journey: {
+        betaInterestId: string | null;
+        betaInterestAt: Timestamp | null;
+        source: "landing_page" | "app_direct" | "invite" | "organic";
+        registeredAt: Timestamp;
+        registrationSource: "web" | "app";
+        androidBetaInviteSent: boolean;
+        androidBetaInviteSentAt: Timestamp | null;
+        appFirstOpenAt: Timestamp | null;
+        appPlatform: "ios" | "android" | "web" | null;
+        appVersion: string | null;
+        onboardingStartedAt: Timestamp | null;
+        onboardingCompletedAt: Timestamp | null;
+        onboardingSkipped: boolean;
+        familyCreatedAt: Timestamp | null;
+        familyJoinedAt: Timestamp | null;
+    };
+    
+    // Access & subscription
+    accessType: "admin" | "founders_pass" | "free_beta" | "trial";
+    betaPosition: number | null;
+    foundersPass: boolean;
+    foundersPassExpiresAt: Timestamp | null;
+    trialExpiresAt: Timestamp | null;
+    
+    // App data
+    familyId: string | null;
+    familyName: string | null;
+}
+
+// Legacy interface for backward compatibility
 export interface UserRegistration {
     id: string;
     email: string;
@@ -189,7 +229,7 @@ export interface IosWaitlistEntry {
 
 // Context
 interface AdminContextType {
-    users: UserRegistration[];
+    users: UserDocument[];
     betaInterests: BetaInterest[];
     bugReports: BugReport[];
     iosWaitlist: IosWaitlistEntry[];
@@ -240,7 +280,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     const [currentUser, setCurrentUser] = useState<User | null>(null);
     const [isAdmin, setIsAdmin] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [users, setUsers] = useState<UserRegistration[]>([]);
+    const [users, setUsers] = useState<UserDocument[]>([]);
     const [betaInterests, setBetaInterests] = useState<BetaInterest[]>([]);
     const [bugReports, setBugReports] = useState<BugReport[]>([]);
     const [iosWaitlist, setIosWaitlist] = useState<IosWaitlistEntry[]>([]);
@@ -260,14 +300,14 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         return () => unsubscribe();
     }, []);
 
-    // Subscribe to user registrations
+    // Subscribe to users collection (unified user documents)
     useEffect(() => {
         if (!isAdmin) return;
-        const q = query(collection(db, "user_registrations"), orderBy("registeredAt", "desc"));
+        const q = query(collection(db, "users"), orderBy("createdAt", "desc"));
         const unsubscribe = onSnapshot(q, (snapshot) => {
-            const userList: UserRegistration[] = [];
+            const userList: UserDocument[] = [];
             snapshot.forEach((doc) => {
-                userList.push({ id: doc.id, ...doc.data() } as UserRegistration);
+                userList.push({ id: doc.id, ...doc.data() } as UserDocument);
             });
             setUsers(userList);
             setLastRefresh(new Date());

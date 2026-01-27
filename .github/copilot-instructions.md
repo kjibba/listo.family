@@ -13,6 +13,7 @@ Before starting ANY task, ALWAYS:
 4. **Announce to user** which agents/skills are being used at the start of work:
    - Example: "📋 **Using skills:** `nextjs-best-practices`, `seo-fundamentals` | **Suggested agent:** `seo-specialist`"
 5. If a specialized agent would be better suited, **suggest switching** before starting work
+6. **STOP and wait** for user to activate the suggested agent before continuing - do not proceed with the task until confirmed
 
 This ensures consistent patterns, domain expertise, and transparency about which knowledge sources guide the implementation.
 

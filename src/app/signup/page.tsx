@@ -132,6 +132,7 @@ function SignupContent() {
 
     try {
       // 1. Create user in Firebase Auth
+      // This triggers Cloud Function onUserCreated which creates users/{uid}
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
@@ -154,19 +155,33 @@ function SignupContent() {
         memberIds: [user.uid],
       });
 
-      // 4. Create User Document in Firestore
-      await setDoc(doc(db, "users", user.uid), {
-        email: email.toLowerCase(),
-        displayName: name,
-        photoURL: user.photoURL || null,
-        familyId: familyId,
-        role: "admin", // Creator is always admin
-        createdAt: serverTimestamp(),
-        settings: {
-          notifications: true,
-          theme: "system"
+      // 4. Wait for Cloud Function to create user document, then update with familyId
+      // Cloud Function may take a moment to complete, so we use updateDoc with a small delay
+      const userRef = doc(db, "users", user.uid);
+      
+      // Retry logic for updating user with familyId (in case Cloud Function hasn't finished)
+      let retries = 0;
+      const maxRetries = 5;
+      const updateUserWithFamily = async (): Promise<void> => {
+        try {
+          await updateDoc(userRef, {
+            familyId: familyId,
+            familyName: `${name.split(' ')[0]}s Familie`,
+            "journey.familyCreatedAt": serverTimestamp(),
+          });
+        } catch (error: any) {
+          // If document doesn't exist yet (Cloud Function not done), wait and retry
+          if (error.code === "not-found" && retries < maxRetries) {
+            retries++;
+            console.log(`User document not ready, retrying in 500ms... (${retries}/${maxRetries})`);
+            await new Promise(resolve => setTimeout(resolve, 500));
+            return updateUserWithFamily();
+          }
+          throw error;
         }
-      });
+      };
+
+      await updateUserWithFamily();
 
       // 5. Update beta_interest status to registered
       if (inviteDocId) {
