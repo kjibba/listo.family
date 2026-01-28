@@ -24,6 +24,15 @@ When working with external libraries, frameworks, or APIs, **ALWAYS** use the Co
 3. This ensures we use the latest API patterns and avoid deprecated methods
 4. Applies to: Next.js, Tailwind CSS, Framer Motion, and any other dependencies
 
+**🔍 Listo Codebase MCP (MANDATORY for code changes and searches)**
+Before implementing features or modifying code, **ALWAYS** use the listo-codebase MCP to avoid duplication and breaking changes:
+1. `find_similar_code` - Check if similar functionality already exists
+2. `find_usages` - Find all files using a function/component before modifying it
+3. `get_service_methods` - Review existing service methods before adding new ones
+4. `get_project_patterns` - Understand established patterns before creating new code
+5. `check_translations` - Verify translation keys before adding UI text
+6. Read resources: `listo://coding-guidelines`, `listo://services-overview`
+
 ## Branding & Naming Convention
 - **Formal branding:** Use `listo.family` (lowercase) in titles, metadata, CTAs, logos, and marketing copy
 - **Casual references:** `Listo` is acceptable in flowing body text where natural

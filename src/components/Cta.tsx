@@ -54,9 +54,6 @@ const trialPerks = [
 export default function Cta() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const [quota, setQuota] = useState<QuotaState>({
     earlyAdoptersClaimed: 0,
@@ -99,69 +96,9 @@ export default function Cta() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError("");
 
-    try {
-      // Use transaction to atomically increment counter and add user
-      await runTransaction(db, async (transaction) => {
-        const quotaRef = doc(db, "onboarding_config", "quotas");
-        const quotaDoc = await transaction.get(quotaRef);
-
-        let currentClaimed = 0;
-
-        if (quotaDoc.exists()) {
-          currentClaimed = quotaDoc.data().earlyAdopters?.claimed || 0;
-        }
-
-        // Double-check that spot is still available
-        const stillHasSpots = currentClaimed < EARLY_ADOPTER_SPOTS_TOTAL;
-        const finalUserType = stillHasSpots ? "early_adopter" : "trial";
-
-        // Calculate trial expiration (14 days from now) for trial users
-        const now = new Date();
-        const trialExpiresAt = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
-
-        // Add to beta_interest collection
-        const betaInterestRef = doc(collection(db, "beta_interest"));
-        transaction.set(betaInterestRef, {
-          name,
-          email: email.toLowerCase().trim(),
-          source: "landing_page",
-          userType: finalUserType,
-          position: stillHasSpots ? currentClaimed + 1 : null,
-          createdAt: serverTimestamp(),
-          // Trial expiration tracking
-          ...(finalUserType === "trial" && {
-            trialStartDate: now,
-            trialExpiresAt: trialExpiresAt,
-          }),
-        });
-
-        // Increment counter if this is an early adopter user
-        if (stillHasSpots) {
-          transaction.set(quotaRef, {
-            earlyAdopters: {
-              total: EARLY_ADOPTER_SPOTS_TOTAL,
-              claimed: currentClaimed + 1,
-            },
-            foundersPass: quotaDoc.exists() ? quotaDoc.data().foundersPass : {
-              total: 300,
-              sold: 0,
-              price: 990,
-              yearsAccess: 5,
-            },
-          }, { merge: true });
-        }
-      });
-
-      setSubmitted(true);
-    } catch (err) {
-      console.error("Error submitting interest:", err);
-      setError("Noe gikk galt. Prøv igjen senere.");
-    } finally {
-      setIsLoading(false);
-    }
+    // Redirect directly to signup page instead of adding to beta_interest
+    window.location.href = `/signup?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}`;
   };
 
   // Calculate progress percentage for visual indicator
@@ -279,50 +216,18 @@ export default function Cta() {
 
           {/* Right: Signup form */}
           <div className="bg-white rounded-squircle p-8 shadow-2xl">
-            {submitted ? (
-              <div className="text-center py-8">
-                <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-listo-100 flex items-center justify-center">
-                  <Check className="w-8 h-8 text-listo-600" />
-                </div>
-                <h3 className="text-2xl font-bold text-charcoal mb-3">
-                  {hasEarlyAdopterSpots ? "Du er med! 🎉" : "Takk for interessen!"}
-                </h3>
-                <div className="text-charcoal-light space-y-4">
-                  <p>
-                    {hasEarlyAdopterSpots ? (
-                      <>Gratulerer! Du har sikret deg en av de {EARLY_ADOPTER_SPOTS_TOTAL} Early Adopter-plassene.</>
-                    ) : (
-                      <>Vi har mottatt din påmelding.</>
-                    )}
-                  </p>
+            <h3 className="text-xl font-bold text-charcoal mb-2">
+              {hasEarlyAdopterSpots ? "Sikre din Early Adopter-plass" : "Start din gratis prøve"}
+            </h3>
+            <p className="text-charcoal-light mb-6">
+              {hasEarlyAdopterSpots ? (
+                <>Fyll ut skjemaet for å bli en av de {EARLY_ADOPTER_SPOTS_TOTAL} første.</>
+              ) : (
+                <>Fyll ut skjemaet for å starte din 14-dagers prøveperiode.</>
+              )}
+            </p>
 
-                  <div className="bg-blue-50 p-4 rounded-lg text-sm text-blue-800">
-                    <p className="font-semibold mb-1">📩 Sjekk innboksen din</p>
-                    <p>Du vil motta en e-post med lenke for å fullføre registreringen <strong>innen 2 minutter</strong>.</p>
-                  </div>
-
-                  <p className="text-sm text-charcoal/60 mt-4">
-                    Fikk du ikke e-posten? <br />
-                    <a href={`/signup?email=${encodeURIComponent(email)}`} className="text-listo-600 font-medium underline hover:text-listo-700">
-                      Klikk her for å gå direkte til registrering
-                    </a>
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <>
-                <h3 className="text-xl font-bold text-charcoal mb-2">
-                  {hasEarlyAdopterSpots ? "Sikre din Early Adopter-plass" : "Start din gratis prøve"}
-                </h3>
-                <p className="text-charcoal-light mb-6">
-                  {hasEarlyAdopterSpots ? (
-                    <>Fyll ut skjemaet for å bli en av de {EARLY_ADOPTER_SPOTS_TOTAL} første.</>
-                  ) : (
-                    <>Fyll ut skjemaet for å starte din 14-dagers prøveperiode.</>
-                  )}
-                </p>
-
-                <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
                     <label
                       htmlFor="name"
@@ -393,4 +298,12 @@ export default function Cta() {
       </div>
     </section>
   );
-}
+}className="w-full py-3.5 px-6 bg-gradient-to-r from-listo-500 to-listo-600 hover:from-listo-600 hover:to-listo-700 text-white font-semibold rounded-squircle shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2"
+                  >
+                    <Sparkles className="w-5 h-5" />
+                    {hasEarlyAdopterSpots ? "Sikre min plass" : "Start gratis prøve"}
+                  </button>
+                </form>
+
+                <p className="text-xs text-charcoal/50 mt-4 text-center">
+                  Du blir sendt til registreringssiden for å fullføre

@@ -35,8 +35,8 @@ function SignupLoading() {
 // Main signup content
 function SignupContent() {
   const searchParams = useSearchParams();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [name, setName] = useState(searchParams.get("name") || "");
+  const [email, setEmail] = useState(searchParams.get("email") || "");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
