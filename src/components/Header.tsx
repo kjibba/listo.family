@@ -56,11 +56,11 @@ export default function Header() {
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center gap-4">
             <Link
-              href="#beta"
+              href="/signup"
               className="px-5 py-2.5 bg-gradient-to-r from-listo-500 to-magic-500 hover:from-listo-600 hover:to-magic-600 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
             >
               <Sparkles className="w-4 h-4" />
-              Meld interesse
+              Kom i gang gratis
             </Link>
           </div>
 
@@ -94,11 +94,11 @@ export default function Header() {
               ))}
               <hr className="border-charcoal/10" />
               <Link
-                href="#beta"
+                href="/signup"
                 className="px-5 py-2.5 bg-gradient-to-r from-listo-500 to-magic-500 text-white font-semibold rounded-full text-center shadow-lg flex items-center justify-center gap-2"
               >
                 <Sparkles className="w-4 h-4" />
-                Meld interesse
+                Kom i gang gratis
               </Link>
             </div>
           </div>
@@ -106,4 +106,3 @@ export default function Header() {
       </nav>
     </header>
   );
-}

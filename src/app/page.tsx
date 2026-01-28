@@ -3,7 +3,6 @@ import Hero from "@/components/Hero";
 import Features from "@/components/Features";
 import StoreModeShowcase from "@/components/StoreModeShowcase";
 import HowItWorks from "@/components/HowItWorks";
-import IosWaitlist from "@/components/IosWaitlist";
 import Testimonials from "@/components/Testimonials";
 import Pricing from "@/components/Pricing";
 import BlogPreview from "@/components/BlogPreview";
@@ -19,7 +18,6 @@ export default function Home() {
       <Features />
       <StoreModeShowcase />
       <HowItWorks />
-      <IosWaitlist />
       <Testimonials />
       <Pricing />
       <BlogPreview />
