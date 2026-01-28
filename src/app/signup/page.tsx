@@ -197,10 +197,10 @@ function SignupContent() {
 
           <div className="space-y-3">
             <a
-              href="https://app.listo.family"
+              href={`https://app.listo.family/login?email=${encodeURIComponent(email)}`}
               className="block w-full py-3 px-6 bg-gradient-to-r from-listo-500 to-listo-600 hover:from-listo-600 hover:to-listo-700 text-white font-semibold rounded-squircle-sm shadow-lg hover:shadow-xl transition-all text-center"
             >
-              Åpne listo.family Web App
+              Logg inn på Listo 🚀
             </a>
 
             <Link
