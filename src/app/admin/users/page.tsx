@@ -1,6 +1,7 @@
 "use client";
 
-import { Users, Mail, Calendar, Smartphone, CheckCircle, XCircle, Home, Sparkles, Clock } from "lucide-react";
+import { useState } from "react";
+import { Users, Mail, Calendar, Smartphone, CheckCircle, XCircle, Home, Sparkles, Clock, Trash2 } from "lucide-react";
 import { useAdminData, formatDate, timeAgo, UserDocument } from "../layout";
 
 // Helper to check journey status
