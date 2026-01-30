@@ -11,7 +11,7 @@
 
 **When you see trigger word → STOP → Run this checklist:**
 
-### 📋 PRE-WORK CHECKLIST (3 STEPS - NON-NEGOTIABLE)
+### 📋 PRE-WORK CHECKLIST (4 STEPS - NON-NEGOTIABLE)
 
 #### Step 1: Read Relevant Skills
 ```bash
@@ -32,11 +32,24 @@ mcp_io_github_ups_resolve-library-id("library-name")
 mcp_io_github_ups_get-library-docs(context7CompatibleLibraryID, topic, mode)
 ```
 
+#### Step 4: Find ALL Affected Files (MCP Listo Codebase)
+```typescript
+// Before making changes - find all similar patterns/components
+mcp_listo-codebas_find_usages("ComponentOrFunction")
+mcp_listo-codebas_get_project_patterns("area") // services, components, hooks, etc
+mcp_listo-codebas_find_similar_code("specific_pattern", "all")
+```
+**Why:** Fix the same issue everywhere in ONE go. Prevents:
+- Inconsistent implementations
+- Missing edge cases in other files
+- Half-done solutions that need follow-up work
+
 **✅ AFTER checklist complete** → Announce to user:
 ```
 📋 Using skills: `skill1`, `skill2`
 🔍 MCP Results: [summary]
 📚 Context7: [if used]
+📂 Files to update: [list]
 
 Ready to proceed?
 ```
@@ -117,17 +130,66 @@ Detect which project from file path, then follow specific rules:
 | Similar code | `mcp_listo-codebas_find_similar_code()` |
 | Library docs | `mcp_io_github_ups_get-library-docs()` (Context7) |
 
+### 🎯 MCP Smart Search Strategy
+
+**Instead of many grep/read operations, use MCP strategically:**
+
+| You need to... | Use this MCP tool | Example |
+|----------------|-------------------|---------|
+| Find all places with similar bug | `find_similar_code()` | `find_similar_code("backgroundColor SafeAreaView", "all")` |
+| Find all usages before changing | `find_usages()` | `find_usages("ScreenWrapper")` |
+| Check if feature exists | `check_feature_exists()` | `check_feature_exists("user onboarding flow")` |
+| Understand project patterns | `get_project_patterns()` | `get_project_patterns("components")` |
+| See service methods | `get_service_methods()` | `get_service_methods("FamilyService")` |
+| Check translation keys | `check_translations()` | `check_translations("common")` |
+| Get component props | `get_component_props()` | `get_component_props("Button")` |
+
+### 🛡️ Developer Assistant Tools (before committing)
+
+| Check for... | Use this MCP tool | When |
+|--------------|-------------------|------|
+| Web compatibility issues | `check_web_compatibility()` | Alert, Haptics, etc that break on web |
+| Layout/SafeAreaView bugs | `find_layout_issues("backgroundColor")` | Visual bugs, black areas |
+| Missing translations | `find_hardcoded_text()` | UI text without t() |
+| Firestore anti-patterns | `check_firestore_patterns()` | DB calls in components |
+
+### 📂 Git & GitHub MCP (version control)
+
+| Task | Tool | Example |
+|------|------|---------|
+| Who changed this code? | `mcp_git_blame()` | Find who introduced a bug |
+| What changed recently? | `mcp_git_log()` | See recent commits |
+| Compare versions | `mcp_git_diff()` | See what changed |
+| Search issues/PRs | `mcp_github_search_issues()` | Find related discussions |
+
+**When to re-run MCP during implementation:**
+- 🐛 You discover a bug → Find all similar bugs immediately
+- 🔄 You change a function → Find all usages to update them
+- 🆕 You create a pattern → Check if it already exists differently
+- 🚨 You fix an issue → Search for the same pattern elsewhere
+
+**MCP > grep_search/read_file when:**
+- You need semantic understanding (not just exact text match)
+- You want to find similar patterns (not just duplicates)
+- You need context about project structure/patterns
+- You're debugging and don't know exact keywords
+
 ---
 
 ## 🔄 Development Workflow
 
-1. **User request** → Run PRE-WORK CHECKLIST (3 steps)
+1. **User request** → Run PRE-WORK CHECKLIST (4 steps)
 2. **Detect project** → Use appropriate patterns/rules
-3. **Implement** → Follow project-specific architecture
-4. **Test** → App: all platforms, Landing: responsive + SEO
-5. **Update docs** → FEATURES.md, CHANGELOG.md
-6. **Validate** → `get_errors()` must pass
-7. **Ask before push** to `main` branch
+3. **Plan changes** → List ALL files that need updates (from Step 4)
+4. **Implement** → Follow project-specific architecture
+   - **During implementation:** If you discover new patterns/issues:
+     - **STOP** → Run MCP Listo Codebase again to find all instances
+     - Update all affected files in ONE batch (use `multi_replace_string_in_file`)
+     - Don't fix issues one-by-one if they exist in multiple places
+5. **Test** → App: all platforms, Landing: responsive + SEO
+6. **Update docs** → FEATURES.md, CHANGELOG.md
+7. **Validate** → `get_errors()` must pass
+8. **Ask before push** to `main` branch
 
 ---
 
@@ -137,7 +199,12 @@ Detect which project from file path, then follow specific rules:
 2. **Library Issues:** Check Context7 MCP
 3. **Pattern Questions:** Search MCP codebase
 4. **Breaking Changes:** Use `mcp_listo-codebas_find_usages()`
-5. **Stuck?** Ask user - don't guess
+5. **Found a bug/issue during debugging:**
+   - **Search for similar issues:** `mcp_listo-codebas_find_similar_code()`
+   - **Find all usages:** `mcp_listo-codebas_find_usages()`
+   - **Get best practices:** Context7 MCP
+   - Fix ALL instances, not just the one you found
+6. **Stuck?** Ask user - don't guess
 
 ---
 

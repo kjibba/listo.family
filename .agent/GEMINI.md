@@ -1,107 +1,211 @@
-# Listo Landing Page - AI Coding Instructions
+# Workspace: listo.family (Multi-Project)
 
-## Project Overview
-Norwegian (nb) landing page for listo.family - a family assistant app for meal planning, shopping lists, and task management. Built with Next.js 14 (App Router), TypeScript, Tailwind CSS, and Framer Motion.
+> **Active projects:** React Native App + Landing Page (Next.js)
 
-## 🚨 CRITICAL: Documentation & State Management (READ FIRST)
-**Before writing a single line of code or planning a feature:**
-1.  **Check the Map:** Read `Docs/FEATURES.md` and `Docs/PENDING_FEATURES.md` (in listo-app repo if shared, or local docs).
-2.  **Verify State:** Do not assume a feature is missing. Check `CHANGELOG.md` and `FEATURES.md`.
-3.  **Update Strategy:** If you implement something, you **MUST** update the tracking documents.
-4.  **Single Source of Truth:** These documents are the truth.
+---
 
-## 🤖 Antigravity Kit & Context7
-- **Use the Kit:** Actively use agents and skills.
-- **Context7:** Always use Context7 MCP when I need library/API documentation, code generation, setup or configuration steps without me having to explicitly ask.
+## ⛔ BEFORE USING ANY TOOLS - MANDATORY WORKFLOW
 
-**Live site:** https://listo.family
+**TRIGGER WORDS requiring checklist:**
+`implement`, `add`, `fix`, `create`, `update`, `refactor`, `change`, `build`, `lag`, `fiks`, `fikse`, `endre`
 
-## Branding & Naming Convention
-- **Formal branding:** Use `listo.family` (lowercase) in titles, metadata, CTAs, logos, and marketing copy
-- **Casual references:** `Listo` is acceptable in flowing body text where natural
-- **Author attribution:** Use `Listo-teamet` in blog author sections
-- **CSS/code identifiers:** Keep as-is (e.g., `listo-500`, `bg-listo-100` - these are internal class names)
-- **Firebase project IDs:** Keep as-is (e.g., `listo-6443c`)
+**When you see trigger word or know that you need to go into the code → STOP → Run this checklist:**
 
-## Terminal Usage
-**IMPORTANT:** Do not write to or interact with terminals that have running processes (e.g., `npm run dev`, `npm run build`). Wait for the process to complete before sending new commands.
+### 📋 PRE-WORK CHECKLIST (4 STEPS - NON-NEGOTIABLE)
 
-**⚠️ CRITICAL: Git & Deployment Policy (NON-NEGOTIABLE)**
-- **ALWAYS ASK before committing/pushing to `main` branch**
-- `main` branch auto-deploys to production immediately via server monitoring
-- Production bugs affect real users - TEST thoroughly before pushing
-- Only push to `main` for:
-  - Critical hotfixes (security, crashes, data loss)
-  - Explicitly approved changes by user
-  - Minor documentation/content updates
-- When uncertain, commit to separate branch and wait for user review
-
-## Design System & Brand Colors
-Follow the "Friendly Softness" philosophy documented in the design philosophy file. Use warm, rounded visuals - no sharp corners.
-
-**Color Palette:**
-- `cream-50` (`#FFFAF5`) - Background
-- `charcoal` (`#34495E`) - Primary text, strokes
-- `salmon-500` (`#FF8C69`) - Food/meal features, CTAs
-- `listo-500` (`#2ECC71`) - Success, action states
-- `sky-400` (`#5DADE2`) - Logistics, links
-- `magic-500` (`#9B59B6`) - AI features (use ✨ sparkle icon)
-
-Use Tailwind classes defined in the config: `bg-cream-50`, `text-charcoal`, `text-salmon-500`, etc.
-
-## Component Patterns
-
-### Section Structure
-Each landing page section follows this pattern (see Features component):
-```tsx
-<section className="py-24 bg-white">  {/* or bg-cream-50 */}
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    {/* Header with badge, title, subtitle */}
-    <span className="inline-block px-4 py-1.5 bg-listo-100 text-listo-700 rounded-full text-sm font-medium mb-4">
-      Section Label
-    </span>
-    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-charcoal mb-6">...</h2>
-    {/* Content grid */}
-  </div>
-</section>
-```
-
-### Interactive Elements
-- Buttons: `rounded-full` with gradient backgrounds, hover shadow effects
-- Cards: `rounded-squircle` (custom 1.5rem radius), hover lift effect
-- Icons: Use Lucide React, colored by feature domain (salmon=food, magic=AI, listo=success)
-
-### Client vs Server Components
-- Default to server components (no directive)
-- Add `"use client"` only for: Framer Motion animations, interactive elements, event handlers
-- See Hero component for client component pattern
-
-## Code Cleanup (IMPORTANT)
-When modifying, upgrading, or refactoring code and features:
-- **ALWAYS** remove old, obsolete, and redundant code
-- Delete unused imports, functions, components, and files
-- Remove deprecated patterns when introducing replacements
-- Keep the codebase as lean as possible
-- Don't leave commented-out code "for later"
-
-## Blog Articles
-Blog posts live in the blogg directory with dynamic routes. Article metadata defined inline in the blog page. Each article page exports:
-- `metadata` object for SEO
-- `jsonLd` structured data for Google
-- Article content with consistent heading hierarchy
-
-## Key Commands
+#### Step 1: Read Relevant Skills
 ```bash
-npm run dev    # Start dev server at localhost:3000
-npm run build  # Build for production (standalone output)
-npm run lint   # Run ESLint
+read_file(".github/skills/[skill-name]/SKILL.md")
 ```
 
-## Deployment
-Deployed via github to Hetzner. Automated via script running on server. 
+#### Step 2: Check if Code Already Exists (MCP Listo Codebase)
+```typescript
+mcp_listo-codebas_find_similar_code("feature_keyword", "all")
+mcp_listo-codebas_check_feature_exists("description")
+```
+**If match found** → Reuse existing code, don't write new
 
-## Language & Content
-All user-facing content is in **Norwegian (Bokmål)**. Maintain this consistency:
-- Page lang: `<html lang="nb">`
-- Dates: `nb-NO` locale formatting
-- SEO metadata in Norwegian
+#### Step 3: Get Latest Library Docs (MCP Context7)
+```typescript
+// Only for external libraries
+mcp_io_github_ups_resolve-library-id("library-name")
+mcp_io_github_ups_get-library-docs(context7CompatibleLibraryID, topic, mode)
+```
+
+#### Step 4: Find ALL Affected Files (MCP Listo Codebase)
+```typescript
+// Before making changes - find all similar patterns/components
+mcp_listo-codebas_find_usages("ComponentOrFunction")
+mcp_listo-codebas_get_project_patterns("area") // services, components, hooks, etc
+mcp_listo-codebas_find_similar_code("specific_pattern", "all")
+```
+**Why:** Fix the same issue everywhere in ONE go. Prevents:
+- Inconsistent implementations
+- Missing edge cases in other files
+- Half-done solutions that need follow-up work
+
+**✅ AFTER checklist complete** → Announce to user:
+```
+📋 Using skills: `skill1`, `skill2`
+🔍 MCP Results: [summary]
+📚 Context7: [if used]
+📂 Files to update: [list]
+
+Ready to proceed?
+```
+
+**❌ DO NOT** code before completing checklist. This creates technical debt.
+
+---
+
+## 🎯 Project Detection (Auto-Router)
+
+Detect which project from file path, then follow specific rules:
+
+### 📱 React Native App (`NyeListo/listo-app/`)
+- **Framework:** Expo SDK 52, React Native, TypeScript, NativeWind v4
+- **Backend:** Firebase (Auth, Firestore), RevenueCat payments
+- **Platforms:** iOS, Android, **Web (PWA)** - must work on all three
+- **Details:** See `NyeListo/ARCHITECTURE.md`
+
+**Critical Rules:**
+- ALL user text uses `t()` translation (nb/en/da)
+- NO Firestore in components - use services only
+- Use `Pressable` with `cursor: 'pointer'` for web
+- Test on web before committing (Alert, Haptics don't work)
+
+### 🌐 Landing Page (`Listo.family landing page/`)
+- **Framework:** Next.js 14 App Router, TypeScript, Tailwind CSS
+- **Language:** Norwegian (nb) only
+- **Branding:** Use `listo.family` (lowercase) in formal contexts
+- **Details:** See project-specific copilot-instructions.md
+
+**Critical Rules:**
+- All content in Norwegian (Bokmål)
+- `lang="nb"` in HTML
+- SEO metadata required for all pages
+- Framer Motion for animations
+
+---
+
+## 🚫 Universal Non-Negotiable Rules
+
+### 1. Git & Deployment
+- **ALWAYS ASK before `git push` to `main`** (auto-deploys to production)
+- Use feature branches for new work
+- Only push to `main` for: hotfixes, approved changes, minor docs
+
+### 2. Documentation Updates
+- New feature → Update relevant FEATURES.md/CHANGELOG.md
+- Bug fix → Update BUGS.md/CHANGELOG.md
+- Update docs in SAME commit as code
+
+### 3. Code Quality
+- **Fix lint errors immediately** - never use `@ts-ignore`
+- Run `get_errors()` after every file edit
+- Remove debug `console.log()` before committing
+- Follow existing patterns (check MCP codebase first)
+
+---
+
+## 📚 Where to Find Information
+
+### By Project
+
+| Need | React Native App | Landing Page |
+|------|------------------|--------------|
+| Architecture | `NyeListo/ARCHITECTURE.md` | Next.js App Router docs |
+| Tech details | `NyeListo/listo-app/README.md` | `Listo.family landing page/README.md` |
+| Features | `NyeListo/listo-app/Docs/FEATURES.md` | Landing page sections |
+| Bugs | `NyeListo/listo-app/Docs/BUGS.md` | N/A |
+| Strategy | `NyeListo/WEB_FIRST_STRATEGY.md` | `Listo.family landing page/STRATEGY_*.md` |
+
+### Universal Resources
+
+| Task | Resource |
+|------|----------|
+| React patterns | `.github/skills/react-patterns/SKILL.md` |
+| Clean code | `.github/skills/clean-code/SKILL.md` |
+| Debugging | `.github/skills/systematic-debugging/SKILL.md` |
+| Similar code | `mcp_listo-codebas_find_similar_code()` |
+| Library docs | `mcp_io_github_ups_get-library-docs()` (Context7) |
+
+### 🎯 MCP Smart Search Strategy
+
+**Instead of many grep/read operations, use MCP strategically:**
+
+| You need to... | Use this MCP tool | Example |
+|----------------|-------------------|---------|
+| Find all places with similar bug | `find_similar_code()` | `find_similar_code("backgroundColor SafeAreaView", "all")` |
+| Find all usages before changing | `find_usages()` | `find_usages("ScreenWrapper")` |
+| Check if feature exists | `check_feature_exists()` | `check_feature_exists("user onboarding flow")` |
+| Understand project patterns | `get_project_patterns()` | `get_project_patterns("components")` |
+| See service methods | `get_service_methods()` | `get_service_methods("FamilyService")` |
+| Check translation keys | `check_translations()` | `check_translations("common")` |
+| Get component props | `get_component_props()` | `get_component_props("Button")` |
+
+### 🛡️ Developer Assistant Tools (before committing)
+
+| Check for... | Use this MCP tool | When |
+|--------------|-------------------|------|
+| Web compatibility issues | `check_web_compatibility()` | Alert, Haptics, etc that break on web |
+| Layout/SafeAreaView bugs | `find_layout_issues("backgroundColor")` | Visual bugs, black areas |
+| Missing translations | `find_hardcoded_text()` | UI text without t() |
+| Firestore anti-patterns | `check_firestore_patterns()` | DB calls in components |
+
+### 📂 Git & GitHub MCP (version control)
+
+| Task | Tool | Example |
+|------|------|---------|
+| Who changed this code? | `mcp_git_blame()` | Find who introduced a bug |
+| What changed recently? | `mcp_git_log()` | See recent commits |
+| Compare versions | `mcp_git_diff()` | See what changed |
+| Search issues/PRs | `mcp_github_search_issues()` | Find related discussions |
+
+**When to re-run MCP during implementation:**
+- 🐛 You discover a bug → Find all similar bugs immediately
+- 🔄 You change a function → Find all usages to update them
+- 🆕 You create a pattern → Check if it already exists differently
+- 🚨 You fix an issue → Search for the same pattern elsewhere
+
+**MCP > grep_search/read_file when:**
+- You need semantic understanding (not just exact text match)
+- You want to find similar patterns (not just duplicates)
+- You need context about project structure/patterns
+- You're debugging and don't know exact keywords
+
+---
+
+## 🔄 Development Workflow
+
+1. **User request** → Run PRE-WORK CHECKLIST (4 steps)
+2. **Detect project** → Use appropriate patterns/rules
+3. **Plan changes** → List ALL files that need updates (from Step 4)
+4. **Implement** → Follow project-specific architecture
+   - **During implementation:** If you discover new patterns/issues:
+     - **STOP** → Run MCP Listo Codebase again to find all instances
+     - Update all affected files in ONE batch (use `multi_replace_string_in_file`)
+     - Don't fix issues one-by-one if they exist in multiple places
+5. **Test** → App: all platforms, Landing: responsive + SEO
+6. **Update docs** → FEATURES.md, CHANGELOG.md
+7. **Validate** → `get_errors()` must pass
+8. **Ask before push** to `main` branch
+
+---
+
+## 🆘 When Something Goes Wrong
+
+1. **Syntax/Type Errors:** Run `get_errors()`
+2. **Library Issues:** Check Context7 MCP
+3. **Pattern Questions:** Search MCP codebase
+4. **Breaking Changes:** Use `mcp_listo-codebas_find_usages()`
+5. **Found a bug/issue during debugging:**
+   - **Search for similar issues:** `mcp_listo-codebas_find_similar_code()`
+   - **Find all usages:** `mcp_listo-codebas_find_usages()`
+   - **Get best practices:** Context7 MCP
+   - Fix ALL instances, not just the one you found
+6. **Stuck?** Ask user - don't guess
+
+---
+
+**Remember:** Quality > Speed. Following the checklist prevents technical debt that costs more time than it saves.

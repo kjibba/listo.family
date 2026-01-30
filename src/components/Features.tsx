@@ -11,6 +11,7 @@ import {
   MapPin,
   ArrowRight,
   Smartphone,
+  WifiOff,
 } from "lucide-react";
 
 import Link from "next/link";
@@ -83,6 +84,14 @@ const features = [
     description:
       "Egne lister for hytta, båten eller ferieleiligheten. Aldri mer glem dopapir til hytta! 🏔️",
     color: "alert",
+  },
+  {
+    icon: WifiOff,
+    title: "Fungerer offline",
+    description:
+      "Ingen dekning i butikken? Null stress. Listo fungerer offline og synkroniserer så fort du er på nett igjen.",
+    color: "magic",
+    isNew: true,
   },
 ];
 
