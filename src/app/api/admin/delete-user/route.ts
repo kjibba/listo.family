@@ -3,19 +3,37 @@ import * as admin from 'firebase-admin';
 
 // Force dynamic rendering (don't pre-render at build time)
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
-// Initialize Firebase Admin (idempotent)
-if (!admin.apps.length) {
-    admin.initializeApp({
-        credential: admin.credential.cert({
-            projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-            privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-            clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
-        }),
-    });
+// Lazy Firebase Admin initialization with build-time safety
+function initFirebaseAdmin() {
+    if (!admin.apps.length) {
+        // Skip initialization during build if env vars missing
+        if (!process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID) {
+            console.warn('Firebase Admin not initialized - missing credentials');
+            return null;
+        }
+        
+        admin.initializeApp({
+            credential: admin.credential.cert({
+                projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+                privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+                clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
+            }),
+        });
+    }
+    return admin;
 }
 
 export async function POST(request: NextRequest) {
+    const firebaseAdmin = initFirebaseAdmin();
+    
+    if (!firebaseAdmin) {
+        return NextResponse.json(
+            { error: 'Firebase Admin not configured' },
+            { status: 500 }
+        );
+    }
     try {
         const { email } = await request.json();
 
@@ -38,9 +56,9 @@ export async function POST(request: NextRequest) {
 
         // 1. Delete from Firebase Auth
         try {
-            const user = await admin.auth().getUserByEmail(email);
+            const user = await firebaseAdmin.auth().getUserByEmail(email);
             userId = user.uid;
-            await admin.auth().deleteUser(user.uid);
+            await firebaseAdmin.auth().deleteUser(user.uid);
             results.authDeleted = true;
         } catch (e: any) {
             if (e.code !== 'auth/user-not-found') {
@@ -49,7 +67,7 @@ export async function POST(request: NextRequest) {
         }
 
         // 2. Delete from Firestore users
-        const userSnapshot = await admin
+        const userSnapshot = await firebaseAdmin
             .firestore()
             .collection('users')
             .where('email', '==', email.toLowerCase())
@@ -61,7 +79,7 @@ export async function POST(request: NextRequest) {
             const userData = userSnapshot.docs[0].data();
             familyId = userData.familyId || null;
 
-            const batch = admin.firestore().batch();
+            const batch = firebaseAdmin.firestore().batch();
             userSnapshot.forEach((d) => batch.delete(d.ref));
             await batch.commit();
             results.firestoreDeleted = true;
@@ -70,7 +88,7 @@ export async function POST(request: NextRequest) {
         // 3. Delete family if user was owner and only member
         if (familyId && userId) {
             try {
-                const familyDoc = await admin
+                const familyDoc = await firebaseAdmin
                     .firestore()
                     .collection('families')
                     .doc(familyId)
@@ -82,7 +100,7 @@ export async function POST(request: NextRequest) {
                         familyData?.ownerId === userId &&
                         familyData?.members?.length <= 1
                     ) {
-                        await admin
+                        await firebaseAdmin
                             .firestore()
                             .collection('families')
                             .doc(familyId)
@@ -96,14 +114,14 @@ export async function POST(request: NextRequest) {
         }
 
         // 4. Delete from beta_interest
-        const betaSnapshot = await admin
+        const betaSnapshot = await firebaseAdmin
             .firestore()
             .collection('beta_interest')
             .where('email', '==', email.toLowerCase())
             .get();
 
         if (!betaSnapshot.empty) {
-            const batch = admin.firestore().batch();
+            const batch = firebaseAdmin.firestore().batch();
             betaSnapshot.forEach((d) => batch.delete(d.ref));
             await batch.commit();
             results.betaInterestDeleted = true;
