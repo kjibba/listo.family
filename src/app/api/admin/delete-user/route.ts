@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as admin from 'firebase-admin';
 
+// Force dynamic rendering (don't pre-render at build time)
+export const dynamic = 'force-dynamic';
+
 // Initialize Firebase Admin (idempotent)
 if (!admin.apps.length) {
     admin.initializeApp({
