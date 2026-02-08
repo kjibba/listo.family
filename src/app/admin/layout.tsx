@@ -286,6 +286,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     const [iosWaitlist, setIosWaitlist] = useState<IosWaitlistEntry[]>([]);
     const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
 
+    // Set admin page title
+    useEffect(() => {
+        document.title = "Admin | listo.family";
+    }, []);
+
     // Check auth state
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
