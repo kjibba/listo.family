@@ -38,12 +38,23 @@ export async function GET(request: NextRequest) {
         
         const users = usersSnapshot.docs.map(doc => {
             const data = doc.data();
+            // Admin SDK timestamps are already Date objects or have _seconds property
+            let createdAtISO = null;
+            if (data.createdAt) {
+                if (data.createdAt.toDate) {
+                    createdAtISO = data.createdAt.toDate().toISOString();
+                } else if (data.createdAt._seconds) {
+                    createdAtISO = new Date(data.createdAt._seconds * 1000).toISOString();
+                } else if (data.createdAt instanceof Date) {
+                    createdAtISO = data.createdAt.toISOString();
+                }
+            }
             return {
                 id: doc.id,
                 email: data.email,
                 displayName: data.displayName,
                 hasCreatedAt: !!data.createdAt,
-                createdAt: data.createdAt ? data.createdAt.toDate().toISOString() : null,
+                createdAt: createdAtISO,
                 familyId: data.familyId,
                 hasJourney: !!data.journey,
             };
