@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { initializeApp } from "firebase/app";
+import { getApps, initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { fixJourneyConsistency, verifyJourneyConsistency } from "@/lib/migrations/fix-journey-consistency";
 
@@ -13,7 +13,9 @@ const firebaseConfig = {
     appId: "1:616905600919:web:d5e5c9f8a7b6c4d3e2f1a0",
 };
 
-const app = initializeApp(firebaseConfig, "migration-app");
+// Prevent duplicate Firebase app initialization
+const existingApp = getApps().find(a => a.name === "migration-app");
+const app = existingApp || initializeApp(firebaseConfig, "migration-app");
 const db = getFirestore(app);
 
 const ADMIN_EMAILS = ["kjibba@gmail.com"];

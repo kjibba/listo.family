@@ -1,16 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Users, Mail, Calendar, Smartphone, CheckCircle, XCircle, Home, Sparkles, Clock, Trash2, ChevronRight, AlertTriangle, TrendingDown } from "lucide-react";
+import { Users, Mail, Calendar, Smartphone, ChevronRight, AlertTriangle, Search, X, Filter } from "lucide-react";
 import { useAdminData, formatDate, timeAgo, UserDocument } from "../layout";
 
 // Helper to check journey status
 const getJourneyStatus = (user: UserDocument) => {
     const journey = user.journey;
     if (!journey) return { step: 0, label: "Ukjent", color: "text-charcoal-light" };
-    
-    if (journey.familyCreatedAt || journey.familyJoinedAt) {
+
+    if (journey.familyCreatedAt || journey.familyJoinedAt || user.familyId) {
         return { step: 5, label: "Familie", color: "text-listo-600" };
     }
     if (journey.onboardingCompletedAt) {
@@ -53,212 +53,155 @@ const AccessBadge = ({ accessType }: { accessType: string }) => {
     );
 };
 
+type FilterType = "all" | "at-risk" | "with-family" | "no-family";
+
 export default function UsersPage() {
     const { users } = useAdminData();
     const router = useRouter();
-
-    // Stats calculations
-    const registeredLast7Days = users.filter(u => {
-        const ts = u.createdAt;
-        if (!ts) return false;
-        const date = ts.toDate ? ts.toDate() : new Date();
-        return (new Date().getTime() - date.getTime()) < 7 * 24 * 60 * 60 * 1000;
-    }).length;
-
-    const registeredToday = users.filter(u => {
-        const ts = u.createdAt;
-        if (!ts) return false;
-        const date = ts.toDate ? ts.toDate() : new Date();
-        const now = new Date();
-        return date.getDate() === now.getDate() &&
-            date.getMonth() === now.getMonth() &&
-            date.getFullYear() === now.getFullYear();
-    }).length;
-
-    const withFamily = users.filter(u => u.familyId).length;
-    const completedOnboarding = users.filter(u => u.journey?.onboardingCompletedAt).length;
-    const openedApp = users.filter(u => u.journey?.appFirstOpenAt).length;
-
-    // ─── Activation Funnel Data ────────────────────────────────
-    const funnelSteps = [
-        {
-            label: "Registrert",
-            count: users.length,
-            icon: Users,
-            color: "bg-salmon-100 text-salmon-600",
-        },
-        {
-            label: "Åpnet app",
-            count: openedApp,
-            icon: Smartphone,
-            color: "bg-magic-100 text-magic-600",
-        },
-        {
-            label: "Onboardet",
-            count: completedOnboarding,
-            icon: CheckCircle,
-            color: "bg-sky-100 text-sky-600",
-        },
-        {
-            label: "Familie",
-            count: withFamily,
-            icon: Home,
-            color: "bg-listo-100 text-listo-600",
-        },
-    ];
+    const [search, setSearch] = useState("");
+    const [filter, setFilter] = useState<FilterType>("all");
 
     // Users at risk (registered > 3 days ago, no family)
-    const atRiskUsers = users.filter(u => {
-        const ts = u.createdAt;
-        if (!ts) return false;
-        const date = ts.toDate ? ts.toDate() : new Date();
-        const daysOld = (new Date().getTime() - date.getTime()) / (1000 * 60 * 60 * 24);
-        return daysOld > 3 && !u.familyId;
-    });
+    const atRiskIds = useMemo(() => {
+        return new Set(
+            users.filter(u => {
+                const ts = u.createdAt;
+                if (!ts) return false;
+                const date = ts.toDate ? ts.toDate() : new Date();
+                const daysOld = (new Date().getTime() - date.getTime()) / (1000 * 60 * 60 * 24);
+                return daysOld > 3 && !u.familyId;
+            }).map(u => u.id)
+        );
+    }, [users]);
+
+    // Filter and search
+    const filteredUsers = useMemo(() => {
+        let result = users;
+
+        // Text search
+        if (search.trim()) {
+            const q = search.toLowerCase();
+            result = result.filter(u =>
+                (u.displayName?.toLowerCase().includes(q)) ||
+                (u.email?.toLowerCase().includes(q)) ||
+                (u.id?.toLowerCase().includes(q))
+            );
+        }
+
+        // Filter
+        switch (filter) {
+            case "at-risk":
+                result = result.filter(u => atRiskIds.has(u.id));
+                break;
+            case "with-family":
+                result = result.filter(u => u.familyId);
+                break;
+            case "no-family":
+                result = result.filter(u => !u.familyId);
+                break;
+        }
+
+        return result;
+    }, [users, search, filter, atRiskIds]);
+
+    const filterOptions: { value: FilterType; label: string; count: number }[] = [
+        { value: "all", label: "Alle", count: users.length },
+        { value: "at-risk", label: "I faresonen", count: atRiskIds.size },
+        { value: "with-family", label: "Med familie", count: users.filter(u => u.familyId).length },
+        { value: "no-family", label: "Uten familie", count: users.filter(u => !u.familyId).length },
+    ];
 
     return (
-        <div className="space-y-6">
-            {/* Stats - Top Row */}
-            <div className="grid grid-cols-3 gap-4">
-                <div className="bg-white p-6 rounded-squircle shadow-lg">
-                    <p className="text-3xl font-bold text-charcoal">{users.length}</p>
-                    <p className="text-sm text-charcoal-light">Totalt registrert</p>
-                </div>
-                <div className="bg-white p-6 rounded-squircle shadow-lg">
-                    <p className="text-3xl font-bold text-listo-600">{registeredLast7Days}</p>
-                    <p className="text-sm text-charcoal-light">Siste 7 dager</p>
-                </div>
-                <div className="bg-white p-6 rounded-squircle shadow-lg">
-                    <p className="text-3xl font-bold text-salmon-600">{registeredToday}</p>
-                    <p className="text-sm text-charcoal-light">I dag</p>
-                </div>
-            </div>
-
-            {/* ─── Activation Funnel ────────────────────────────── */}
-            <div className="bg-white rounded-squircle shadow-lg border border-charcoal/5 overflow-hidden">
-                <div className="px-6 py-4 border-b border-charcoal/10">
-                    <h2 className="text-lg font-semibold text-charcoal flex items-center gap-2">
-                        <TrendingDown className="w-5 h-5 text-listo-500" />
-                        Aktiveringsstrakt
-                    </h2>
-                    <p className="text-sm text-charcoal-light mt-1">
-                        Hvor faller brukerne av? Vis konvertering mellom hvert steg.
+        <div className="space-y-4">
+            {/* At-Risk Alert */}
+            {atRiskIds.size > 0 && filter !== "at-risk" && (
+                <div className="bg-amber-50 border border-amber-200 rounded-squircle p-3 flex items-center gap-3">
+                    <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+                    <p className="text-sm text-amber-800 flex-1">
+                        <strong>{atRiskIds.size}</strong> bruker{atRiskIds.size > 1 ? "e" : ""} registrert &gt;3 dager uten familie.
                     </p>
-                </div>
-                <div className="p-6">
-                    <div className="flex items-end gap-2">
-                        {funnelSteps.map((step, index) => {
-                            const percentage = users.length > 0 ? Math.round((step.count / users.length) * 100) : 0;
-                            const prevCount = index > 0 ? funnelSteps[index - 1].count : users.length;
-                            const dropOff = prevCount > 0 ? prevCount - step.count : 0;
-                            const dropOffPct = prevCount > 0 ? Math.round((dropOff / prevCount) * 100) : 0;
-                            const Icon = step.icon;
-                            const barHeight = Math.max(20, percentage);
-
-                            return (
-                                <div key={step.label} className="flex-1 flex flex-col items-center">
-                                    {/* Drop-off indicator between steps */}
-                                    {index > 0 && dropOff > 0 && (
-                                        <div className="text-xs text-red-500 font-medium mb-1">
-                                            -{dropOff} ({dropOffPct}%)
-                                        </div>
-                                    )}
-                                    {index === 0 && <div className="text-xs text-transparent mb-1">&nbsp;</div>}
-
-                                    {/* Count */}
-                                    <p className="text-2xl font-bold text-charcoal mb-2">{step.count}</p>
-
-                                    {/* Bar */}
-                                    <div className="w-full flex justify-center mb-3">
-                                        <div
-                                            className={`w-full max-w-[80px] rounded-t-lg transition-all ${step.color.split(" ")[0]}`}
-                                            style={{ height: `${barHeight}px` }}
-                                        />
-                                    </div>
-
-                                    {/* Label */}
-                                    <div className={`w-10 h-10 rounded-full ${step.color.split(" ")[0]} flex items-center justify-center mb-2`}>
-                                        <Icon className={`w-5 h-5 ${step.color.split(" ")[1]}`} />
-                                    </div>
-                                    <p className="text-sm font-medium text-charcoal text-center">{step.label}</p>
-                                    <p className="text-xs text-charcoal-light">{percentage}%</p>
-                                </div>
-                            );
-                        })}
-                    </div>
-
-                    {/* Summary insight */}
-                    {users.length > 0 && (
-                        <div className="mt-6 pt-4 border-t border-charcoal/10 flex items-start gap-3">
-                            <AlertTriangle className="w-5 h-5 text-amber-500 mt-0.5 shrink-0" />
-                            <div className="text-sm text-charcoal-light">
-                                {(() => {
-                                    const regToApp = users.length > 0 ? ((openedApp / users.length) * 100).toFixed(0) : 0;
-                                    const appToOnboard = openedApp > 0 ? ((completedOnboarding / openedApp) * 100).toFixed(0) : 0;
-                                    const onboardToFamily = completedOnboarding > 0 ? ((withFamily / completedOnboarding) * 100).toFixed(0) : 0;
-
-                                    // Find biggest drop
-                                    const drops = [
-                                        { label: "Registrering → App åpnet", pct: Number(regToApp), lost: users.length - openedApp },
-                                        { label: "App åpnet → Onboarding", pct: Number(appToOnboard), lost: openedApp - completedOnboarding },
-                                        { label: "Onboarding → Familie", pct: Number(onboardToFamily), lost: completedOnboarding - withFamily },
-                                    ].filter(d => d.lost > 0);
-
-                                    if (drops.length === 0) return "Alle brukere er fullt aktivert! 🎉";
-
-                                    const biggest = drops.reduce((a, b) => a.lost > b.lost ? a : b);
-                                    return (
-                                        <>
-                                            <strong>Største frafall:</strong> {biggest.label} — {biggest.lost} brukere ({100 - biggest.pct}% frafall).
-                                            {biggest.label.includes("App åpnet") && " Disse registrerte seg men åpnet aldri appen."}
-                                            {biggest.label.includes("Onboarding") && " Disse åpnet appen men fullførte ikke veiviseren."}
-                                            {biggest.label.includes("Familie") && " Disse fullførte onboarding men opprettet ikke familie."}
-                                        </>
-                                    );
-                                })()}
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            {/* At-Risk Users Alert */}
-            {atRiskUsers.length > 0 && (
-                <div className="bg-amber-50 border border-amber-200 rounded-squircle p-4 flex items-start gap-3">
-                    <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5 shrink-0" />
-                    <div>
-                        <p className="font-medium text-amber-800">
-                            {atRiskUsers.length} bruker{atRiskUsers.length > 1 ? "e" : ""} i faresonen
-                        </p>
-                        <p className="text-sm text-amber-700 mt-1">
-                            Registrert for mer enn 3 dager siden uten å opprette familie. Klikk på en bruker for å se detaljer.
-                        </p>
-                    </div>
+                    <button
+                        onClick={() => setFilter("at-risk")}
+                        className="text-xs font-medium text-amber-700 hover:text-amber-900 underline"
+                    >
+                        Vis
+                    </button>
                 </div>
             )}
 
+            {/* Search + Filters */}
+            <div className="bg-white rounded-squircle shadow-lg border border-charcoal/5 p-4">
+                <div className="flex flex-col sm:flex-row gap-3">
+                    {/* Search Input */}
+                    <div className="relative flex-1">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-charcoal-light" />
+                        <input
+                            type="text"
+                            placeholder="Søk på navn, e-post eller ID..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="w-full pl-10 pr-8 py-2 border border-charcoal/10 rounded-squircle-sm text-sm focus:outline-none focus:ring-2 focus:ring-listo-500 focus:border-transparent"
+                        />
+                        {search && (
+                            <button
+                                onClick={() => setSearch("")}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-charcoal-light hover:text-charcoal"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        )}
+                    </div>
+
+                    {/* Filter Tabs */}
+                    <div className="flex gap-1 bg-cream-50 p-1 rounded-squircle-sm">
+                        {filterOptions.map(opt => (
+                            <button
+                                key={opt.value}
+                                onClick={() => setFilter(opt.value)}
+                                className={`px-3 py-1.5 text-xs font-medium rounded-squircle-sm transition-all whitespace-nowrap ${
+                                    filter === opt.value
+                                        ? "bg-white text-charcoal shadow-sm"
+                                        : "text-charcoal-light hover:text-charcoal"
+                                }`}
+                            >
+                                {opt.label} ({opt.count})
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Result count */}
+                {(search || filter !== "all") && (
+                    <p className="mt-2 text-xs text-charcoal-light">
+                        Viser {filteredUsers.length} av {users.length} brukere
+                        {search && <> for &ldquo;{search}&rdquo;</>}
+                    </p>
+                )}
+            </div>
+
             {/* User List */}
             <div className="bg-white rounded-squircle shadow-lg border border-charcoal/5 overflow-hidden">
-                <div className="px-6 py-4 border-b border-charcoal/10 flex items-center justify-between">
-                    <h2 className="text-lg font-semibold text-charcoal flex items-center gap-2">
-                        <Users className="w-5 h-5 text-listo-500" />
-                        Registrerte brukere
+                <div className="px-6 py-3 border-b border-charcoal/10 flex items-center justify-between">
+                    <h2 className="font-semibold text-charcoal flex items-center gap-2">
+                        <Users className="w-4 h-4 text-listo-500" />
+                        Brukere
+                        <span className="text-sm font-normal text-charcoal-light">({filteredUsers.length})</span>
                     </h2>
-                    <span className="text-sm text-charcoal-light">
-                        Klikk for å se detaljer og feature-bruk
+                    <span className="text-xs text-charcoal-light">
+                        Klikk for detaljer
                     </span>
                 </div>
 
-                {users.length === 0 ? (
+                {filteredUsers.length === 0 ? (
                     <div className="p-12 text-center text-charcoal-light">
                         <Users className="w-12 h-12 mx-auto mb-4 opacity-30" />
-                        <p>Ingen registrerte brukere ennå.</p>
+                        <p>{search ? `Ingen treff for "${search}"` : "Ingen brukere matcher filteret."}</p>
                     </div>
                 ) : (
                     <div className="divide-y divide-charcoal/5">
-                        {users.map((user, index) => {
+                        {filteredUsers.map((user, index) => {
                             const journey = getJourneyStatus(user);
-                            const isAtRisk = atRiskUsers.some(u => u.id === user.id);
+                            const isAtRisk = atRiskIds.has(user.id);
                             return (
                                 <div
                                     key={user.id}
@@ -267,7 +210,7 @@ export default function UsersPage() {
                                 >
                                     <div className="flex items-center gap-4">
                                         {/* Avatar */}
-                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold ${
+                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold shrink-0 ${
                                             isAtRisk
                                                 ? "bg-gradient-to-br from-amber-400 to-amber-600"
                                                 : "bg-gradient-to-br from-listo-400 to-listo-600"
@@ -281,7 +224,7 @@ export default function UsersPage() {
                                                 <p className="font-medium text-charcoal truncate">
                                                     {user.displayName || "Uten navn"}
                                                 </p>
-                                                {index === 0 && (
+                                                {index === 0 && filter === "all" && !search && (
                                                     <span className="px-2 py-0.5 bg-salmon-100 text-salmon-700 text-xs font-medium rounded-full">
                                                         Nyeste
                                                     </span>

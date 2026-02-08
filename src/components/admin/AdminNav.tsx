@@ -2,19 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, Sparkles, Bug, Server, Zap, Mail, Apple, Trash2, Database } from "lucide-react";
+import { LayoutDashboard, Users, Bug, Server, Zap, Mail, Wrench } from "lucide-react";
 
 const navItems = [
     { href: "/admin", label: "Oversikt", icon: LayoutDashboard },
+    { href: "/admin/users", label: "Brukere", icon: Users },
     { href: "/admin/server", label: "Server", icon: Server },
     { href: "/admin/ai", label: "AI", icon: Zap },
     { href: "/admin/mail", label: "E-post", icon: Mail },
-    { href: "/admin/beta", label: "Beta", icon: Sparkles },
-    { href: "/admin/ios", label: "iOS", icon: Apple },
-    { href: "/admin/users", label: "Brukere", icon: Users },
-    { href: "/admin/migrations", label: "Migrations", icon: Database },
-    { href: "/admin/delete", label: "Slett", icon: Trash2 },
     { href: "/admin/bugs", label: "Bugs", icon: Bug },
+    { href: "/admin/tools", label: "Verktøy", icon: Wrench },
 ];
 
 export default function AdminNav() {
@@ -23,7 +20,7 @@ export default function AdminNav() {
     return (
         <nav className="flex gap-1 bg-cream-50 p-1 rounded-squircle-sm">
             {navItems.map(({ href, label, icon: Icon }) => {
-                const isActive = pathname === href;
+                const isActive = href === "/admin" ? pathname === href : pathname.startsWith(href);
                 return (
                     <Link
                         key={href}
