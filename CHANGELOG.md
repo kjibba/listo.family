@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Data Migration System:** New `/admin/migrations` page for running data consistency fixes
+- **Journey Consistency Fix:** Migration script to sync journey tracking with actual user state
+- **Verify Journey API:** `/api/admin/fix-journey` endpoint with dry-run, verify, and fix modes
+- **Migration UI:** Visual feedback for migration status, dry-run testing, and live execution
+- **Admin Title:** Admin pages now show "Admin | listo.family" in browser tab for easy identification
+- **User Journey Fallback:** User detail page now handles missing journey data gracefully (uses familyId as source of truth)
 - **User Analytics Dashboard:** Click on any user in /admin/users to see detailed activation journey and feature usage
 - **Activation Funnel:** Visual funnel on users page showing drop-off between Registration → App Opened → Onboarding → Family
 - **User Detail Page:** `/admin/users/[id]` with activation steps, feature usage grid (AI, recipes, meals, shopping), engagement score, subscription info

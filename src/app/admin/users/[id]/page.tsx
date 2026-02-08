@@ -52,7 +52,7 @@ function buildFunnelSteps(user: UserDocument): FunnelStep[] {
             key: "family",
             label: "Familie opprettet",
             icon: Home,
-            completedAt: ts(user.journey?.familyCreatedAt) || ts(user.journey?.familyJoinedAt),
+            completedAt: ts(user.journey?.familyCreatedAt) || ts(user.journey?.familyJoinedAt) || (user.familyId ? ts(user.createdAt) : null),
             description: user.journey?.familyJoinedAt ? "Ble med i en familie" : "Opprettet familie",
         },
     ];
